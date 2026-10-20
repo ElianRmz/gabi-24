@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f1e7">
+<title>Made for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16161a; --cream:#f6f1e7; --line:#16161a22; --mute:#16161a99;
+  /* acentos de su paleta, usados con moderación */
+  --magenta:#e0347f; --cobalt:#2f4bd8; --lime:#a8d84a;
+  --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",monospace;
+}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{font-family:var(--sans);font-size:15px;line-height:1.55;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+.view{display:none}.view.on{display:block}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.serif{font-family:var(--serif)}
+.fade{animation:fade .8s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+
+/* ───────── PORTADA (opción C: dos polaroids pegadas en papel crema) ───────── */
+#home.on{display:flex;flex-direction:column;align-items:center;min-height:100svh;padding:calc(40px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));gap:36px}
+.home-title{font-family:var(--serif);font-weight:400;font-size:clamp(38px,9vw,64px);line-height:1;text-align:center;text-wrap:balance;animation:rise .8s var(--ease-out) backwards}
+.doors{display:grid;gap:40px;width:min(100%,900px)}
+@media (min-width:701px){.doors{grid-template-columns:1fr 1fr;gap:56px}}
+/* compu: las dos tarjetas crecen con la pantalla para que no queden solas en medio */
+@media (min-width:1100px){.doors{width:min(88vw,1320px);gap:clamp(56px,5vw,96px)}.door{padding:14px 14px 0}.door h2{font-size:clamp(40px,3.2vw,56px)}.door p{font-size:17px}}
+.door{--rot:-1.6deg;--tape:color-mix(in srgb,var(--magenta) 55%,#fff);position:relative;display:block;background:#fff;padding:10px 10px 0;color:var(--ink);text-align:left;box-shadow:0 1px 2px #16161a1a,0 26px 48px -24px #16161a70;transform:rotate(var(--rot));transition:transform .5s var(--ease-out),box-shadow .5s var(--ease-out);animation:drop .9s var(--ease-out) backwards .1s}
+.door+.door{--rot:1.4deg;--tape:color-mix(in srgb,var(--cobalt) 45%,#fff);animation-delay:.2s}
+@keyframes drop{from{opacity:0;transform:translateY(-18px) rotate(calc(var(--rot) * 3))}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.door:active{transform:rotate(0) scale(.985);transition-duration:.16s}
+@media (hover:hover) and (pointer:fine){.door:hover{transform:rotate(0) translateY(-4px);box-shadow:0 1px 2px #16161a1a,0 34px 60px -26px #16161a80}.door:hover .stage{transform:translate(-50%,-50%) scale(1.03)}}
+.door::before{content:"";position:absolute;top:-12px;left:50%;z-index:3;width:88px;height:24px;background:var(--tape);opacity:.8;transform:translateX(-50%) rotate(-3deg)}
+.pic{position:relative;aspect-ratio:4/3;overflow:hidden}
+.pic,.ow-hero{container-type:size}
+.stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100cqw,calc(100cqh * 1600 / 866));aspect-ratio:1600/866;transition:transform 1.4s var(--ease-out)}
+.stage>img{position:absolute}
+.stage>.bg{inset:0;width:100%;height:100%}
+.us{filter:drop-shadow(0 6px 10px #0004)}
+.stamp{position:absolute;right:10px;bottom:8px;z-index:2;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#ffa24a;text-shadow:0 0 6px #ff8a1f88}
+.door>.txt{display:flex;flex-direction:column;padding:16px 8px 20px}
+.door h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,6vw,40px);line-height:1;margin-bottom:8px}
+.door p{color:var(--mute);max-width:34ch}
+.door .cta{margin-top:14px;align-self:flex-start;font-size:14px;border-bottom:1px solid currentColor;padding-bottom:1px}
+.door .lock{margin-top:8px;color:var(--mute)}
+.home-deco{width:110px;margin-top:auto;transform:rotate(-5deg)}
+
+/* ───────── barra ───────── */
+.bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:22px;padding:calc(4px + env(safe-area-inset-top)) 20px 4px;background:color-mix(in srgb,var(--cream) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.bar::-webkit-scrollbar{display:none}
+.bar .tab{position:relative;color:var(--mute);font-size:14px;padding:13px 0;transition:color .2s}
+.bar .tab.on{color:var(--ink)}
+.bar .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:10px;height:1px;background:currentColor}
+.bar .home{font-family:var(--serif);font-style:italic;font-size:18px;margin-right:auto;padding:10px 16px 10px 0}
+
+/* ───────── secciones ───────── */
+.panel{display:none}.panel.on{display:block}
+.wrap{max-width:720px;margin:auto;padding:56px 20px}
+.h{font-family:var(--serif);font-weight:400;font-size:clamp(36px,7vw,56px);line-height:1.05;text-align:center}
+.sub{text-align:center;color:var(--mute);margin:10px auto 0;max-width:46ch}
+.strip{width:100%;height:120px;object-fit:cover}
+.rule{border:0;border-top:1px solid var(--line);margin:48px 0}
+
+/* The Little Things: película. Una escena a pantalla completa por hábito. El texto va sobre la foto
+   (arriba en el teléfono, abajo a la izquierda en compu), ustedes se anclan a una esquina inferior y el
+   montoncito de polaroids a la otra esquina, así nunca se encima con el texto */
+.film{position:relative;height:calc(100dvh - var(--barh,53px));min-height:540px;overflow:hidden;background:#0d0d10;color:#fff;touch-action:pan-y}
+.reel{position:absolute;inset:0;display:flex;transition:transform 1.1s cubic-bezier(.7,0,.2,1)}
+.frame{position:relative;flex:0 0 100%;height:100%;overflow:hidden}
+.frame>.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 6s ease}
+.frame.on>.bg{transform:none}
+.frame::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#0008,transparent 38%),linear-gradient(transparent 58%,#000a)}
+/* ustedes: recorte con borde blanco anclado abajo a la izquierda; sube desde abajo tras revelarse la escena.
+   width/height auto + max-*: conserva la proporción del recorte y nunca pasa del 40% del alto */
+.f-us{position:absolute;left:4%;bottom:calc(72px + env(safe-area-inset-bottom));z-index:2;width:auto;height:auto;max-width:46%;max-height:40%;filter:drop-shadow(0 10px 18px #0007);opacity:0;translate:0 14%;transition:opacity .5s var(--ease-out) .5s,translate 1s cubic-bezier(.34,1.4,.64,1) .5s}
+.frame.on .f-us{opacity:1;translate:0 0}
+/* cierre: su dibujo "hasta la raíz" pegado con cinta en medio de la escena; entra girando un poco */
+.endart{position:absolute;left:50%;top:56%;z-index:2;width:min(88%,620px);margin:0;padding:8px;background:#fff;box-shadow:0 1px 2px #16161a22,0 24px 40px -18px #000a;opacity:0;transform:translate(-50%,-46%) rotate(-5deg) scale(.94);transition:opacity .5s var(--ease-out) .4s,transform 1s cubic-bezier(.34,1.4,.64,1) .4s}
+.endart::before{content:"";position:absolute;top:-10px;left:50%;width:70px;height:22px;background:var(--magenta);opacity:.6;transform:translateX(-50%) rotate(-3deg)}
+.endart img{display:block;width:100%;height:auto}
+.frame.on .endart{opacity:1;transform:translate(-50%,-50%) rotate(-2deg)}
+/* flip: ustedes arriba a la derecha (donde iba el dibujo) y el dibujo baja a su lugar, abajo a la izquierda */
+.frame.flip .f-us{left:auto;right:16px;top:36%;bottom:auto;max-height:22%}
+.frame.flip .doodle{right:auto;left:22px;top:auto;bottom:calc(96px + env(safe-area-inset-bottom))}
+/* el montoncito de polaroids: abajo a la derecha, arriba de la barra de controles */
+.stack{position:absolute;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:2;display:grid;width:min(150px,38%);opacity:0;transform:translateY(28px) rotate(8deg) scale(.9);transition:opacity .4s var(--ease-out) .3s,transform .9s cubic-bezier(.34,1.56,.64,1) .3s}
+.frame.on .stack{opacity:1;transform:none}
+.stack>.shot{grid-area:1/1;position:relative;background:#fff;padding:6px 6px 22px;box-shadow:0 1px 2px #16161a22,0 16px 30px -14px #16161a77;transform:translate(var(--dx,0px),0) translate(var(--tx,0px),var(--ty,0px)) rotate(calc(var(--r,3deg) + var(--rd,0deg)));transition:transform .45s var(--ease-out),opacity .26s}
+.stack.many{touch-action:none;cursor:grab}
+.stack>.shot.drag{transition:none;cursor:grabbing}
+.stack>.shot.fly{opacity:0;transition:transform .28s var(--ease-out),opacity .28s}
+.stack>.shot:last-child::before{content:"";position:absolute;top:-9px;left:50%;width:46px;height:18px;background:var(--tape);opacity:.65;transform:translateX(-50%) rotate(-4deg)}
+.shot img{aspect-ratio:4/5;object-fit:cover;width:100%;pointer-events:none;-webkit-user-drag:none}
+/* texto: arriba en teléfono; cada bloque entra en cascada cuando la escena está activa */
+.cap{position:absolute;left:22px;right:22px;top:28px;z-index:3}
+.cap>*{opacity:0;transform:translateY(10px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.frame.on .cap>*{opacity:1;transform:none}
+.frame.on .cap>:nth-child(1){transition-delay:.15s}.frame.on .cap>:nth-child(2){transition-delay:.24s}.frame.on .cap>:nth-child(3){transition-delay:.33s}
+.cap .label{display:block;margin-bottom:12px;opacity:.75}
+.cap h1,.cap h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,8.6vw,64px);line-height:1;margin-bottom:12px;text-wrap:balance;text-shadow:0 1px 14px #0006}
+.cap h1{font-size:clamp(34px,9.4vw,88px);line-height:.98}
+.cap p{font-family:var(--serif);font-style:italic;font-size:clamp(18px,4.8vw,24px);line-height:1.35;text-wrap:pretty;text-shadow:0 1px 10px #0007}
+.cap .hint{margin-top:12px;font-family:var(--mono);font-style:normal;font-size:11px;opacity:.75}
+/* su dibujo: entra con un rebote y se puede mover con el dedo (ver bindPeel) */
+.doodle{position:absolute;right:16px;top:44%;z-index:3;width:min(88px,22%)}
+.doodle .peel{opacity:0;transform:scale(.6) rotate(-14deg);transition:opacity .3s var(--ease-out) .7s,transform .8s cubic-bezier(.34,1.56,.64,1) .7s}
+.frame.on .doodle .peel{opacity:1;transform:none;animation:wiggle 1s var(--ease-out) 1.8s}
+@keyframes wiggle{25%{rotate:calc(var(--rot,6deg) - 7deg)}60%{rotate:calc(var(--rot,6deg) + 5deg)}}
+/* controles: contador, barra de progreso y flechas; sobre la foto, en la parte de abajo */
+.fui{position:absolute;left:22px;right:22px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:10;display:flex;align-items:center;gap:14px;text-shadow:0 1px 6px #0007}
+.fbar{flex:1;height:1px;background:#fff4;position:relative}
+.fbar i{position:absolute;left:0;top:0;bottom:0;background:#fff;transition:width 1.1s}
+.fui button{padding:11px 16px;border:1px solid #fff8;border-radius:99px;font-size:13px;color:#fff;background:#0004;backdrop-filter:blur(4px)}
+@media (min-width:900px){
+  .frame::after{background:linear-gradient(90deg,#000a,transparent 62%),linear-gradient(transparent 55%,#000a)}
+  .cap{left:8%;right:auto;top:auto;bottom:18%;max-width:min(540px,44%)}
+  .cap h1{font-size:clamp(48px,6vw,96px)}
+  .cap h2{font-size:clamp(44px,4.6vw,72px)}
+  .cap p{font-size:clamp(20px,1.7vw,26px)}
+  .f-us{left:auto;right:9%;max-width:24%;max-height:min(40%,400px)}
+  .stack{top:9%;bottom:auto;right:9%;width:min(210px,14vw)}
+  .doodle{right:30%;top:11%;width:min(120px,9vw)}
+  .fui{left:8%;right:8%}
+  .endart{left:68%;top:50%;width:min(44%,600px)}
+  /* flip en compu: ustedes arriba a la derecha y las polaroids abajo, cambian de lugar */
+  .frame.flip .f-us{right:9%;top:9%;bottom:auto;max-height:min(40%,400px)}
+  .frame.flip .stack{top:auto;bottom:calc(96px + env(safe-area-inset-bottom))}
+  .frame.flip .doodle{left:46%;right:auto;top:11%;bottom:auto}
+  /* portada: coordenadas del fondo 1600×866 con el mismo recorte centrado de cover.
+     La base de ustedes cae sobre la curva del camino, aunque cambie la ventana. */
+  .frame:first-child{container-type:size;--title-bg-w:max(100cqw,calc(100cqh * 1600 / 866));--title-bg-h:max(100cqh,calc(100cqw * 866 / 1600))}
+  .frame:first-child::after{background:linear-gradient(90deg,#000b,transparent 65%),linear-gradient(180deg,#0003,transparent 55%),linear-gradient(transparent 70%,#000a)}
+  .frame:first-child .cap{top:12%;bottom:auto;max-width:min(540px,36%)}
+  .frame:first-child .cap h1{font-size:clamp(48px,5vw,88px)}
+  .frame:first-child .f-us{left:calc(50% - var(--title-bg-w) * .045);right:auto;bottom:calc(50% - var(--title-bg-h) * .27);height:calc(var(--title-bg-h) * .14);max-height:none;max-width:none;transform:translateX(-50%)}
+}
+
+/* pegatinas: recortes con borde blanco, o dibujos rectangulares impresos con cinta */
+.peel{display:block;position:relative;rotate:var(--rot,6deg);touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;transition:scale .2s var(--ease-out),filter .2s var(--ease-out)}
+.peel img{width:100%;pointer-events:none;-webkit-user-drag:none}
+.peel.cut{filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 6px 8px #16161a33)}
+.peel.print{background:#fff;padding:5px 5px 16px;box-shadow:0 1px 2px #16161a22,0 12px 22px -12px #16161a77}
+.peel.print::before{content:"";position:absolute;top:-8px;left:50%;width:40px;height:15px;background:var(--tape,var(--lime));opacity:.65;transform:translateX(-50%) rotate(3deg)}
+.peel.lift{scale:1.08;z-index:6;cursor:grabbing}
+.peel.cut.lift{filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 16px 18px #16161a40)}
+
+/* páginas de Experiment y Numbers: hojas de papel pegadas en el álbum */
+.phead{text-align:center;padding-top:8px}
+.print{position:relative;display:block;background:#fff;padding:9px 9px 34px;margin:0 auto 34px;width:min(100%,560px);rotate:var(--rot,-1.2deg);box-shadow:0 1px 2px #16161a1a,0 26px 48px -26px #16161a70}
+.print::before{content:"";position:absolute;top:-12px;left:50%;z-index:2;width:84px;height:24px;background:var(--tape,var(--lime));opacity:.7;transform:translateX(-50%) rotate(-3deg)}
+.print>img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.phead .peel{position:absolute;width:var(--w,96px)}
+.phead{position:relative}
+.paper{--tape:var(--lime);position:relative;background:#fffdf8;padding:30px 22px 26px;margin-top:40px;rotate:var(--rot,0deg);box-shadow:0 1px 2px #16161a14,0 20px 36px -24px #16161a60}
+.paper::before{content:"";position:absolute;top:-11px;left:50%;width:76px;height:22px;background:var(--tape);opacity:.6;transform:translateX(-50%) rotate(2deg)}
+.paper:nth-child(4n+1){--rot:-.7deg;--tape:var(--lime)}.paper:nth-child(4n+2){--rot:.6deg;--tape:var(--magenta)}.paper:nth-child(4n+3){--rot:-.4deg;--tape:var(--cobalt)}.paper:nth-child(4n){--rot:.8deg;--tape:var(--lime)}
+@supports (animation-timeline:view()){
+  .paper,.print,.notes .cell,.tickets .cell{animation:settle linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+  @keyframes settle{from{opacity:0;translate:0 40px;scale:.97}}
+}
+.ph{font-family:var(--serif);font-weight:400;font-size:clamp(28px,6vw,36px);line-height:1.05;margin-bottom:16px;text-wrap:balance}
+.q{font-family:var(--serif);font-size:24px;line-height:1.2;margin-bottom:16px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;transition:border-color .2s,transform .14s var(--ease-out)}
+.opt.ok{border-color:var(--ink);background:var(--ink);color:var(--cream)}
+.opt.no{color:var(--mute);text-decoration:line-through}
+.feedback{margin-top:14px;font-family:var(--serif);font-style:italic;font-size:20px;min-height:28px}
+.feedback img{width:170px;background:#fff;padding:6px 6px 24px;margin:14px 0 12px;rotate:-3deg;box-shadow:0 1px 2px #16161a22,0 16px 30px -14px #16161a77;animation:pop .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes pop{from{opacity:0;scale:.8;rotate:-12deg}}
+.link{font-family:var(--sans);font-style:normal;font-size:14px;border-bottom:1px solid currentColor}
+/* "next" de los juegos: arriba a la derecha de la hoja */
+#qnext,#mnext,#snext{position:absolute;top:10px;right:16px;margin:0!important;padding:6px 2px;line-height:1}
+.paper:has(#quiz),.paper:has(#memory),.paper:has(#said){padding-top:48px}
+.blurframe{background:#fff;padding:8px 8px 30px;margin-bottom:18px;rotate:1deg;box-shadow:0 1px 2px #16161a1a,0 18px 34px -20px #16161a70}
+.blurimg{width:100%;aspect-ratio:16/9;object-fit:cover;filter:blur(22px);transition:filter 1.2s var(--ease-out)}
+.blurimg.clear{filter:none}
+.blurframe{position:relative;cursor:zoom-in;-webkit-user-select:none;user-select:none}
+.blurimg.peek{filter:blur(0);transition-duration:.35s}
+
+.said{font-family:var(--serif);font-size:26px;line-height:1.25;margin:6px 0 18px;overflow-wrap:anywhere}
+.said::before{content:"“"}.said::after{content:"”"}
+.who{grid-template-columns:1fr 1fr}.who .opt{text-align:center}
+#results .pending{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--mute)}
+#results .pending span{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:12px}
+#results:not(.done) .final,#results.done .pending{display:none}
+#results.done .final{animation:pop .7s cubic-bezier(.34,1.56,.64,1) both}
+.report{width:100%;border-collapse:collapse;font-size:14px}
+.report td{padding:11px 0;border-bottom:1px dashed #16161a33}
+.report td:last-child{text-align:right;font-family:var(--mono)}
+.quote{font-family:var(--serif);font-style:italic;font-size:22px;text-align:center;margin-top:24px;line-height:1.35;text-wrap:balance}
+.deco{margin:0 auto}
+
+/* números */
+.big{text-align:center}
+.big b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(80px,22vw,150px);line-height:1.15;font-variant-numeric:lining-nums tabular-nums;margin-bottom:10px}
+.big .label{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+.cell{padding:16px 14px;text-align:left;background:#fffdf8;box-shadow:0 1px 2px #16161a14,0 14px 26px -18px #16161a60}
+.cell .v{font-family:var(--serif);font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
+.cell .l{font-size:12px;color:var(--mute);margin-top:4px}
+.tickets .cell{border-left:1px dashed #16161a33;rotate:var(--rot,0deg)}
+.tickets .cell:nth-child(3n+1){--rot:-1deg}.tickets .cell:nth-child(3n+2){--rot:.7deg}.tickets .cell:nth-child(3n){--rot:-.3deg}
+/* estadísticas graciosas: notas adhesivas en sus colores */
+.notes .cell{aspect-ratio:1;display:flex;flex-direction:column;justify-content:space-between;rotate:var(--rot,0deg);box-shadow:0 1px 1px #16161a14,0 16px 22px -16px #16161a70}
+.notes .cell:nth-child(4n+1){--rot:-2deg;background:color-mix(in srgb,var(--lime) 38%,#fffdf8)}
+.notes .cell:nth-child(4n+2){--rot:1.6deg;background:color-mix(in srgb,var(--magenta) 20%,#fffdf8)}
+.notes .cell:nth-child(4n+3){--rot:-1deg;background:color-mix(in srgb,var(--cobalt) 16%,#fffdf8)}
+.notes .cell:nth-child(4n){--rot:2.2deg;background:#fdf1b8}
+.grid>.cell{min-width:0}
+.notes .cell .v{font-size:clamp(24px,7vw,40px)}
+.notes .cell .l{color:#16161acc;font-size:13px}
+@media (min-width:521px){.notes{grid-template-columns:repeat(4,1fr)}}
+.tickets .cell:last-child:nth-child(odd){grid-column:1/-1}
+@media (min-width:521px){.tickets .cell:last-child:nth-child(odd){grid-column:auto}}
+/* forecast: reporte del clima, una fila por "día" */
+.wx{list-style:none;margin-top:6px;padding:0}
+.wx li{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"when when pct" "sky txt txt";column-gap:12px;row-gap:2px;padding:12px 0;border-bottom:1px dashed #16161a33}
+.wx .when{grid-area:when;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.wx .sky{grid-area:sky;font-size:26px;line-height:1;width:32px;text-align:center;color:var(--cobalt)}
+.wx .txt{grid-area:txt;font-family:var(--serif);font-size:19px;line-height:1.25}
+.wx .pct{grid-area:pct;font-family:var(--mono);font-size:11px;color:var(--magenta)}
+.page>.pst{position:absolute;width:var(--w)!important;max-width:none;margin:0;z-index:2}
+/* Experiment y Numbers: una página a pantalla completa por sección, cada una con su fondo Ghibli; el scroll se detiene en cada página */
+html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scroll-snap-type:y mandatory;scroll-padding-top:var(--barh,53px)}
+.page{position:relative;min-height:calc(100svh - var(--barh,53px));scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:center;padding:40px 18px;background:var(--bg) center/cover no-repeat;isolation:isolate}
+.page>*{width:100%;max-width:640px;margin-inline:auto}
+.page .paper{margin-top:0}
+.page .phead{padding-top:0}
+.page .phead .print{margin-bottom:22px}
+.paper.card{padding:22px 20px 20px;rotate:.6deg}
+.page .ph.tag{display:table;margin:0 auto;background:#fffdf8;padding:8px 18px 10px;rotate:-1deg;box-shadow:0 14px 26px -18px #16161a60}
+.down{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));translate:-50% 0;width:auto!important;font-size:20px;color:#fff;text-shadow:0 1px 6px #0008;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{translate:-50% 6px}}
+.measure{color:#fff;text-align:center;align-items:center}
+.measure>button{width:auto}
+.measure::before{content:"";position:absolute;inset:0;background:#0000008c;z-index:-1}
+.measure button{margin-top:20px;padding:10px 22px;border:1px solid #fffa;border-radius:99px}
+.calc{font-family:var(--mono);margin-top:24px}
+.err{font-family:var(--mono);color:#ff8f8f;font-size:clamp(18px,5vw,28px);margin-top:24px;letter-spacing:.06em}
+
+/* ───────── OPEN WHEN ───────── */
+#open{min-height:100dvh}
+.ow-hero{position:relative;height:72dvh;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;color:#fff;padding:0 24px;overflow:hidden}
+.ow-hero p{margin-bottom:24px}
+.ow-hero .stage{z-index:-2}
+.ow-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 40%,#0007)}
+.ow-hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(52px,12vw,96px);line-height:.95}
+.ow-hero p{font-family:var(--serif);font-style:italic;font-size:20px;opacity:.9;margin-top:6px}
+.ded{font-family:var(--serif);font-size:22px;line-height:1.45;text-align:center}
+.hugbtn{display:block;margin:28px auto 0;padding:12px 26px;border:1px solid var(--ink);border-radius:99px}
+.cat{margin-top:48px}
+.cat .label{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--mute)}
+.cat .label i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.env{display:flex;justify-content:space-between;align-items:baseline;width:100%;padding:14px 2px;border-bottom:1px solid var(--line);text-align:left;font-family:var(--serif);font-size:22px}
+.env small{font-family:var(--sans);font-size:12px;color:var(--mute);margin-right:8px}
+.env::after{content:"→";font-family:var(--sans);font-size:14px;color:var(--mute);transition:transform .2s}
+.random{display:block;margin:48px auto 0;color:var(--mute);font-size:14px;border-bottom:1px solid currentColor}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:#16161a99;padding:16px;backdrop-filter:blur(4px)}
+.modal.on{display:grid}
+.sheet{background:var(--cream);border-radius:14px;max-width:520px;width:100%;max-height:86dvh;overflow:auto;padding:28px 24px;position:relative;animation:fade .35s ease}
+.sheet h3{font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.1;margin-bottom:12px;padding-right:28px}
+.sheet .x{position:absolute;top:12px;right:16px;font-size:22px;color:var(--mute)}
+.sheet .body{font-family:var(--serif);font-size:20px;line-height:1.5}
+.sheet ul{padding-left:18px}
+.sheet li{margin:4px 0}
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.gallery img{aspect-ratio:1;object-fit:cover;border-radius:4px}
+.sheet canvas{width:100%;aspect-ratio:1;border:1px solid var(--line);border-radius:8px;touch-action:none;background:#fff;margin-top:12px}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.row button{font-size:13px;border-bottom:1px solid currentColor}
+.swatch{width:22px;height:22px;border-radius:50%;border:0 !important}
+.hug{display:flex;justify-content:center;margin:20px 0}
+.hug svg{width:140px;height:80px}
+.hug .a,.hug .b{transition:transform 1s cubic-bezier(.3,1.4,.5,1)}
+.hug.go .a{transform:translateX(16px)}.hug.go .b{transform:translateX(-16px)}
+.deco{display:block;margin:0 auto;height:auto}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60}
+.proto{position:fixed;bottom:10px;right:10px;z-index:70;font:10px var(--mono);letter-spacing:.08em;background:var(--ink);color:var(--cream);padding:4px 10px;border-radius:99px;opacity:.7}
+
+/* ───────── base móvil (skills: mobile-native + emil-design-eng) ───────── */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)}
+html{overscroll-behavior:none;-webkit-text-size-adjust:100%}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+:where(button){transition:transform .14s var(--ease-out)}
+:where(button):active{transform:scale(.97)}
+.opt,.cell{transition:border-color .2s,transform .14s var(--ease-out)}
+:focus-visible{outline:1.5px solid currentColor;outline-offset:3px}
+::selection{background:#e0347f2e}
+@media (hover:hover) and (pointer:fine){.opt:hover{border-color:var(--ink)}.hugbtn:hover{background:var(--ink);color:var(--cream)}.env:hover::after{transform:translateX(4px);color:var(--ink)}}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.4s;animation-timing-function:var(--ease-out)}
+.proto{text-decoration:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="proto">PROTOTIPO · DATOS DE EJEMPLO</div>
+
+<!-- PORTADA -->
+<main id="home" class="view">
+  <h1 class="home-title">made for you, <i>pichulina</i></h1>
+  <div class="doors">
+    <button class="door" data-go="anniv" data-lock="anniversary">
+      <div class="pic"><div class="stage"><img class="bg" src="assets/miyazaki/m51.jpg" alt=""><img class="us" src="assets/nosotros/u13.webp" alt="" style="left:57%;bottom:3%;height:42%"></div><span class="stamp">'26 10 20</span></div>
+      <div class="txt">
+      <h2>Our Anniversary</h2>
+      <p>Our story, our memories and all the little things that make us us.</p>
+      <span class="cta">Explore us</span>
+      <span class="label lock"></span>
+      </div>
+    </button>
+    <button class="door" data-go="open" data-lock="birthday">
+      <div class="pic"><div class="stage"><img class="bg" src="assets/miyazaki/m32.jpg" alt=""><img class="us" src="assets/nosotros/u8.webp" alt="" style="left:59%;top:56%;height:13%"></div><span class="stamp">'26 10 21</span></div>
+      <div class="txt">
+      <h2>For You, Always</h2>
+      <p>A place you can come back to whenever you need to feel me close.</p>
+      <span class="cta">Open when…</span>
+      <span class="label lock"></span>
+      </div>
+    </button>
+  </div>
+  <img class="home-deco" src="assets/stickers/pichulinos.webp" alt="">
+</main>
+
+<!-- ANIVERSARIO -->
+<main id="anniv" class="view" data-tab="things">
+  <nav class="bar">
+    <button class="home" data-go="home">made for you</button>
+    <button class="tab on" data-tab="things">The Little Things</button>
+    <button class="tab" data-tab="lab">The Love Experiment</button>
+    <button class="tab" data-tab="numbers">Us, by the Numbers</button>
+  </nav>
+
+  <section class="panel on" id="p-things">
+    <div class="film" id="film">
+      <div class="reel" id="reel"></div>
+      <div class="fui"><span class="label" id="fcount"></span><div class="fbar"><i id="fprog"></i></div><button id="fprev" aria-label="previous">←</button><button id="fnext" aria-label="next">next →</button></div>
+    </div>
+  </section>
+
+  <section class="panel paged" id="p-lab">
+    <div class="page" style="--bg:url(assets/miyazaki/m16.jpg)">
+      <header class="phead">
+        <figure class="print" style="--rot:-1.4deg;--tape:var(--magenta)"><img src="assets/fotos/lab-cover.webp" alt=""></figure>
+        <span class="peel cut" style="--rot:-8deg;--w:90px;left:-4px;top:calc(min(100vw,560px) * .42)"><img src="assets/stickers/personaje-1.webp" alt=""></span>
+        <div class="paper card"><h1 class="h">The Love <i>Experiment</i></h1>
+        <p class="sub">Subject: us. Objective: discover what makes our story one of a kind.</p></div>
+      </header>
+      <span class="down" aria-hidden="true">↓</span>
+    </div>
+    <div class="page" style="--bg:url(assets/miyazaki/m24.jpg)"><article class="paper"><h2 class="ph">How well do you know us?</h2><div id="quiz"></div></article></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m15.jpg)"><article class="paper"><h2 class="ph">The memory test</h2><div id="memory"></div></article></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m44.jpg)"><article class="paper"><h2 class="ph">Who said it?</h2><div id="said"></div></article></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m26.jpg)">
+        <article class="paper" id="results"><h2 class="ph">Final results</h2>
+          <p class="pending">Results pending… finish the 3 experiments first. <span id="labprog">0 / 3</span></p>
+          <div class="final">
+          <table class="report">
+            <tr><td>Compatibility</td><td>100%</td></tr>
+            <tr><td>Shared memories</td><td>countless</td></tr>
+            <tr><td>Favorite person</td><td>pichulino</td></tr>
+            <tr><td>Future adventures</td><td>pending</td></tr>
+            <tr><td>Probability of choosing you again</td><td>100%</td></tr>
+          </table>
+          <span class="peel cut deco" style="--rot:4deg;width:140px;margin-top:30px"><img src="assets/nosotros/beso.webp" alt=""></span>
+          <p class="quote" style="margin-top:10px">After extensive research, I've concluded that loving you is my favorite discovery.<br><span class="label" style="font-style:normal">— pichulino</span></p>
+          </div>
+        </article>
+    </div>
+  </section>
+
+  <section class="panel paged" id="p-numbers">
+    <div class="page" style="--bg:url(assets/miyazaki/m20.jpg)">
+      <header class="phead">
+        <figure class="print" style="--rot:1.2deg;--tape:var(--cobalt)"><img src="assets/fotos/numbers-cover.webp" alt="" style="object-position:50% 22%"></figure>
+        <span class="peel cut" style="--rot:7deg;--w:120px;right:-6px;top:calc(min(100vw,560px) * .4)"><img src="assets/nosotros/u2.webp" alt=""></span>
+        <div class="paper card"><h1 class="h">Us, <i>by the numbers</i></h1>
+        <p class="sub">Because some things are worth counting. And others are simply immeasurable.</p></div>
+      </header>
+      <span class="peel cut pst" style="--rot:8deg;--w:92px;right:14px;bottom:56px"><img src="assets/stickers/arte-07.webp" alt=""></span>
+      <span class="down" aria-hidden="true">↓</span>
+    </div>
+    <div class="page" style="--bg:url(assets/miyazaki/m04.jpg)">
+      <span class="peel cut pst" style="--rot:-7deg;--w:96px;left:14px;top:26px"><img src="assets/stickers/arte-04.webp" alt=""></span>
+      <article class="paper big" style="--rot:-.6deg">
+        <b id="days">0</b><span class="label">days together</span>
+        <p class="quote">And somehow, I still wish every day had a few more hours with you.</p>
+      </article>
+    </div>
+    <div class="page" style="--bg:url(assets/miyazaki/m40.jpg)"><div class="grid tickets" id="cards"></div><span class="peel cut pst" style="--rot:6deg;--w:70px;right:16px;bottom:24px"><img src="assets/stickers/personaje-5.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m03.jpg)"><div><h2 class="ph tag">The funny statistics</h2><div class="grid notes" id="funny"></div></div><span class="peel cut pst" style="--rot:-6deg;--w:100px;left:12px;bottom:22px"><img src="assets/stickers/arte-03.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m71.jpg)">
+      <article class="paper" style="--rot:.5deg;--tape:var(--magenta)">
+        <span class="label" style="color:var(--mute)">us · weather report</span>
+        <h2 class="ph">The future forecast</h2>
+        <ol class="wx" id="wx"></ol>
+        <p class="quote">The best part? We haven't collected all our data yet.</p>
+      </article>
+      <span class="peel cut pst" style="--rot:7deg;--w:84px;right:10px;top:18px"><img src="assets/stickers/personaje-4.webp" alt=""></span>
+    </div>
+    <div class="page measure" style="--bg:url(assets/miyazaki/m11.jpg)">
+      <p class="serif" style="font-size:clamp(30px,6vw,44px);font-style:italic">Can love really be measured?</p>
+      <button id="measure-btn">Calculate</button>
+      <div id="measure-out"></div>
+      <span class="peel cut pst" style="--rot:-8deg;--w:76px;left:14px;bottom:22px"><img src="assets/stickers/arte-09.webp" alt=""></span>
+    </div>
+  </section>
+</main>
+
+<!-- OPEN WHEN -->
+<main id="open" class="view">
+  <nav class="bar"><button class="home" data-go="home">made for you</button></nav>
+  <header class="ow-hero">
+    <div class="stage"><img class="bg" src="assets/miyazaki/m52.jpg" alt=""><img class="us" src="assets/nosotros/gala.webp" alt="" style="left:44%;top:50%;height:13%"></div>
+    <h1>Open when…</h1>
+    <p>For every version of you, on every kind of day.</p>
+  </header>
+  <div class="wrap">
+    <p class="ded">No sé cómo serán todos los días que vienen, pero sí sé que quiero acompañarte en cada uno de ellos. Así que hice este pequeño espacio para ti.</p>
+    <button class="hugbtn" id="hugbtn">I need a hug</button>
+    <div id="cats"></div>
+    <button class="random" id="random">Open when you don't know what to open</button>
+    <img class="deco" src="assets/stickers/tortugas.webp" alt="" style="width:150px;margin-top:40px">
+  </div>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet"><button class="x" aria-label="close">×</button><div id="modal-body"></div></div>
+</div>
+<canvas class="confetti" id="confetti"></canvas>
+
+<script src="data.js"></script>
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const data = window.DATA;
+const h = (tag, attrs = {}, html = "") => Object.assign(document.createElement(tag), attrs, html ? { innerHTML: html } : {});
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ───── navegación ───── */
+const isOpen = (key) => data.preview || new Date() >= new Date(data.unlock[key]);
+function go(id) {
+  if (!document.getElementById(id)) id = "home";
+  const swap = () => { $$(".view").forEach((v) => v.classList.toggle("on", v.id === id)); scrollTo(0, 0); onView(id); };
+  // fundido suave entre portada y secciones, si el navegador lo soporta
+  document.startViewTransition && !reduceMotion() && $(".view.on") ? document.startViewTransition(swap) : swap();
+  if (location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-go]");
+  if (!b || (b.dataset.lock && !isOpen(b.dataset.lock))) return;
+  go(b.dataset.go);
+});
+addEventListener("popstate", () => go(location.hash.slice(1) || "home"));
+$$("[data-lock]").forEach((b) => {
+  const d = new Date(data.unlock[b.dataset.lock]).toLocaleDateString("en", { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" });
+  b.querySelector(".lock").textContent = !isOpen(b.dataset.lock) ? "opens " + d : data.preview ? "preview · opens " + d : "";
+});
+$$(".tab").forEach((t) => t.onclick = () => {
+  $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
+  $$(".panel").forEach((p) => p.classList.toggle("on", p.id === "p-" + t.dataset.tab));
+  $("#anniv").dataset.tab = t.dataset.tab;
+  scrollTo(0, 0);
+  if (t.dataset.tab === "numbers") startNumbers();
+  onTab(t);
+});
+
+/* ───── modal ───── */
+const modal = $("#modal");
+function openModal(html, after) { $("#modal-body").innerHTML = html; modal.classList.add("on"); after && after($("#modal-body")); }
+modal.onclick = (e) => { if (e.target === modal || e.target.closest(".x")) modal.classList.remove("on"); };
+addEventListener("keydown", (e) => e.key === "Escape" && modal.classList.remove("on"));
+
+// la de hasta arriba (última en el DOM) queda derecha; las de atrás se abren en abanico
+function fanStack(st) {
+  const shots = [...st.children], n = shots.length;
+  // con muchas fotos solo las primeras 3 de atrás se abren; las demás se quedan apiladas detrás
+  shots.forEach((el, j) => { const d = Math.min(3, n - 1 - j); el.style.setProperty("--r", `${d ? (d % 2 ? -1 : 1) * (4 + d * 3) : 3}deg`); el.style.setProperty("--dx", `${d * (d % 2 ? -14 : 12)}px`); });
+}
+const filmVisible = () => $("#anniv").classList.contains("on") && $("#p-things").classList.contains("on") && !modal.classList.contains("on");
+const setBarH = () => document.documentElement.style.setProperty("--barh", $("#anniv .bar").offsetHeight + "px");
+/* ───── The Little Things: la película (una escena a pantalla completa por hábito) ───── */
+const film = { i: 0, n: 0 };
+const TAPE = ["var(--lime)", "var(--magenta)", "var(--cobalt)"];
+// todas las pegatinas movibles son recortes con transparencia (.peel.cut), nunca impresiones con marco.
+// Un dibujo nuevo sin transparencia se convierte con: python3 tools/sticker-png.py
+// ninguna imagen se repite en el sitio: pichulinos (portada) y tortugas (Open When) ya se usan fuera,
+// así que la película reparte estos en escenas espaciadas
+const doodles = ["dinos", "peces", "cafe", "retrato-peces", "arte-08"].map((n) => ({ src: `assets/stickers/${n}.webp` }));
+const doodleAt = { 1: 0, 4: 1, 7: 2, 10: 3, 11: 4 };
+const peel = (d, rot) => `<span class="peel cut" style="--rot:${rot}deg"><img src="${d.src}" alt=""></span>`;
+const shot = (src) => `<div class="shot"><img src="${src}" alt="" draggable="false"></div>`;
+// fondo de pantalla completa y, si hay, ustedes (.f-us) anclados a una esquina de lo visible
+const scene = (bg, us) => `<img class="bg" src="${bg}" alt="">${us ? `<img class="f-us" src="${us}" alt="">` : ""}`;
+function renderFilm() {
+  const A = data.album;
+  const frames = [`<div class="frame">${scene(A.title.bg, A.title.us)}<div class="cap"><span class="label">a little film about us</span><h1>A little reminder of <i>the little things</i> that make me happy with you</h1></div></div>`]
+    .concat(data.habits.map((x, k) => {
+      // la de hasta arriba (última en el DOM) es la foto que se ve; las de atrás quedan en abanico
+      const photos = x.img ? [...(x.more || [])].reverse().concat(x.img) : [];
+      const d = x.cut ? { src: x.cut, cut: true } : doodles[doodleAt[k]];
+      return `<div class="frame${x.flip ? " flip" : ""}" style="--tape:${TAPE[k % 3]}">${scene(x.bg, x.us)}${photos.length ? `<div class="stack${photos.length > 1 ? " many" : ""}">${photos.map(shot).join("")}</div>` : ""}<div class="cap"><span class="label">little thing ${String(k + 1).padStart(2, "0")}</span><h2>${x.t}</h2><p>${x.d}</p>${photos.length > 1 ? `<p class="hint">tap or throw the photo</p>` : ""}</div>${d ? `<div class="doodle">${peel(d, k % 2 ? -7 : 6)}</div>` : ""}</div>`;
+    }))
+    .concat(`<div class="frame end">${scene(A.end.bg)}<div class="cap"><h1><i>and more coming…</i></h1><span class="label">— pichulino</span></div><figure class="endart"><img src="${A.end.art}" alt="Yo te llevo dentro hasta la raíz"></figure></div>`);
+  $("#reel").innerHTML = frames.join("");
+  $$(".stack.many", $("#reel")).forEach(bindStack);
+  $$(".peel", $("#reel")).forEach(bindPeel);
+  film.n = frames.length;
+  setOn(0);
+}
+// el montoncito: un toque pasa a la siguiente; arrastrar y soltar con fuerza la avienta al fondo
+function bindStack(st) {
+  fanStack(st);
+  let g = null;
+  const reset = (el) => ["--tx", "--ty", "--rd"].forEach((p) => el.style.removeProperty(p));
+  const toBack = (el) => { st.prepend(el); fanStack(st); };
+  st.addEventListener("pointerdown", (e) => {
+    if (g) return; // un dedo a la vez
+    const el = st.lastElementChild;
+    g = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), el, dx: 0, dy: 0 };
+    el.setPointerCapture(e.pointerId);
+    el.classList.add("drag");
+  });
+  st.addEventListener("pointermove", (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    g.dx = e.clientX - g.x; g.dy = e.clientY - g.y;
+    g.el.style.setProperty("--tx", g.dx + "px");
+    g.el.style.setProperty("--ty", g.dy + "px");
+    g.el.style.setProperty("--rd", g.dx / 12 + "deg");
+  });
+  const up = (e) => {
+    if (!g || e.pointerId !== g.id) return;
+    const { el, dx, dy, t } = g, dist = Math.hypot(dx, dy), v = dist / (performance.now() - t);
+    g = null;
+    el.classList.remove("drag");
+    if (dist < 6) { reset(el); if (e.type === "pointerup") toBack(el); return; } // un toque
+    if (dist < 70 && v < .5) return reset(el); // no la aventó: regresa a su lugar
+    el.classList.add("fly");
+    el.style.setProperty("--tx", dx * 4 + "px");
+    el.style.setProperty("--ty", dy * 4 + "px");
+    setTimeout(() => { el.classList.replace("fly", "drag"); reset(el); toBack(el); el.offsetWidth; el.classList.remove("drag"); }, 280);
+  };
+  st.addEventListener("pointerup", up);
+  st.addEventListener("pointercancel", up);
+}
+// pegatinas que se pueden mover con el dedo y se quedan donde las dejes
+function bindPeel(el) {
+  let g = null;
+  el.addEventListener("pointerdown", (e) => {
+    if (g) return;
+    const [x0 = 0, y0 = 0] = (el.style.translate || "").split(" ").map(parseFloat).filter((n) => !isNaN(n));
+    g = { id: e.pointerId, x: e.clientX - x0, y: e.clientY - y0 };
+    el.setPointerCapture(e.pointerId);
+    el.classList.add("lift");
+  });
+  el.addEventListener("pointermove", (e) => { if (g && e.pointerId === g.id) el.style.translate = `${e.clientX - g.x}px ${e.clientY - g.y}px`; });
+  const up = (e) => { if (g && e.pointerId === g.id) { g = null; el.classList.remove("lift"); } };
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointercancel", up);
+}
+function setOn(k) {
+  film.i = Math.max(0, Math.min(film.n - 1, k));
+  $("#reel").style.transform = `translateX(${-film.i * 100}%)`;
+  [...$("#reel").children].forEach((f, j) => f.classList.toggle("on", j === film.i));
+  $("#fcount").textContent = `${film.i + 1} / ${film.n}`;
+  $("#fprog").style.width = `${(film.i / (film.n - 1)) * 100}%`;
+  $("#fnext").textContent = film.i === film.n - 1 ? "the experiment →" : "next →";
+}
+// en la última escena, "next" lleva a The Love Experiment
+$("#fnext").onclick = () => film.i === film.n - 1 ? ($('.tab[data-tab="lab"]').click(), scrollTo(0, 0)) : setOn(film.i + 1);
+$("#fprev").onclick = () => setOn(film.i - 1);
+addEventListener("keydown", (e) => {
+  if (!filmVisible()) return;
+  if (e.key === "ArrowRight") setOn(film.i + 1);
+  if (e.key === "ArrowLeft") setOn(film.i - 1);
+});
+// deslizar en horizontal cambia de escena; no cuenta si el dedo empezó sobre polaroids o pegatinas
+let touchX = null;
+$("#film").addEventListener("touchstart", (e) => { touchX = e.target.closest(".stack,.peel") ? null : e.touches[0].clientX; }, { passive: true });
+$("#film").addEventListener("touchend", (e) => {
+  if (touchX === null) return;
+  const d = e.changedTouches[0].clientX - touchX;
+  touchX = null;
+  if (Math.abs(d) > 40) setOn(film.i + (d < 0 ? 1 : -1));
+});
+renderFilm();
+$$(".phead .peel, .deco.peel, .pst").forEach(bindPeel);
+function onView(id) { if (id === "anniv") requestAnimationFrame(setBarH); }
+function onTab() {}
+addEventListener("resize", () => $("#anniv").classList.contains("on") && setBarH());
+
+/* ───── experimento ───── */
+// los resultados finales aparecen cuando termina los 3 juegos
+const lab = new Set();
+function labDone(k) {
+  lab.add(k);
+  $("#labprog").textContent = `${lab.size} / 3`;
+  if (lab.size === 3) $("#results").classList.add("done");
+}
+function renderQuiz(i = 0) {
+  const el = $("#quiz"), q = data.quiz[i];
+  if (!q) return labDone("quiz"), el.innerHTML = `<p class="feedback">Experiment complete.</p>`;
+  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.quiz.length}</p><p class="q">${q.q}</p><div class="opts">${q.options.map((o, j) => `<button class="opt" data-j="${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
+  $$(".opt", el).forEach((b) => b.onclick = () => {
+    const ok = +b.dataset.j === q.answer;
+    b.classList.add(ok ? "ok" : "no");
+    $(".feedback", el).innerHTML = ok ? `Correcto, chiquita.${q.note ? `<br><small>${q.note}</small>` : ""}${q.img ? `<img src="${q.img}">` : "<br>"}<button class="link" id="qnext">Next question →</button>` : `Interesting…${q.wrong?.[b.dataset.j] ? `<br><small>${q.wrong[b.dataset.j]}</small>` : ""}`;
+    if (ok) $("#qnext").onclick = () => renderQuiz(i + 1);
+  });
+}
+function renderMemory(i = 0) {
+  const el = $("#memory"), m = data.memory[i];
+  if (!m) return labDone("memory"), el.innerHTML = `<p class="feedback">Memory: excellent.</p>`;
+  el.innerHTML = `<div class="blurframe"><img class="blurimg" src="${m.img}" alt="" draggable="false"></div><p class="q">${m.q || "Where was this?"}</p><div class="opts">${m.options.map((o, j) => `<button class="opt" data-j="${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
+  // ayudita: al pasar el mouse (o tocar en el teléfono) la foto se ve 2 segundos, máximo 2 veces por foto
+  const img = $(".blurimg", el);
+  let peeks = 2;
+  const peek = () => {
+    if (!peeks || img.classList.contains("peek") || img.classList.contains("clear")) return;
+    peeks--;
+    img.classList.add("peek");
+    setTimeout(() => img.classList.remove("peek"), 2000);
+    if (!peeks) $(".blurframe", el).style.cursor = "auto";
+  };
+  $(".blurframe", el).addEventListener("pointerenter", (e) => e.pointerType === "mouse" && peek());
+  $(".blurframe", el).addEventListener("pointerdown", peek);
+  $$(".opt", el).forEach((b) => b.onclick = () => {
+    const ok = +b.dataset.j === m.answer;
+    b.classList.add(ok ? "ok" : "no");
+    if (!ok) return $(".feedback", el).textContent = "Close… look again.";
+    $(".blurimg", el).classList.add("clear");
+    $(".feedback", el).innerHTML = `${m.reveal}<br><button class="link" id="mnext" style="margin-top:10px">Next →</button>`;
+    $("#mnext").onclick = () => renderMemory(i + 1);
+  });
+}
+// frases reales del chat; ella adivina quién la dijo. Se revela aunque falle.
+function renderSaid(i = 0) {
+  const el = $("#said"), q = data.saidIt[i];
+  if (!q) return labDone("said"), el.innerHTML = `<p class="feedback">Conclusion: we are both a little weird. Perfect match.</p>`;
+  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.saidIt.length}</p><p class="said">${q.text}</p><div class="opts who"><button class="opt" data-w="her">${data.names.her}</button><button class="opt" data-w="me">${data.names.me}</button></div><div class="feedback"></div>`;
+  $$(".opt", el).forEach((b) => b.onclick = () => {
+    if ($(".opt.ok", el)) return;
+    const ok = b.dataset.w === q.who;
+    $(`.opt[data-w="${q.who}"]`, el).classList.add("ok");
+    if (!ok) b.classList.add("no");
+    $(".feedback", el).innerHTML = `${ok ? "Correct." : `Nope. It was ${data.names[q.who]}.`}${q.note ? `<br><small>${q.note}</small>` : ""}<br><button class="link" id="snext" style="margin-top:10px">Next →</button>`;
+    $("#snext").onclick = () => renderSaid(i + 1);
+  });
+}
+renderQuiz(); renderMemory(); renderSaid();
+
+/* ───── números ───── */
+let numbersStarted = false;
+function countUp(el, to, ms = 1600) {
+  const t0 = performance.now();
+  const step = (t) => { const p = reduceMotion() ? 1 : Math.min(1, (t - t0) / ms); el.textContent = Math.round(to * (1 - (1 - p) ** 3)).toLocaleString("en"); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function startNumbers() {
+  if (numbersStarted) return; numbersStarted = true;
+  // días juntos, contados en hora de Curitiba: cambia solo cada medianoche
+  countUp($("#days"), Math.floor((Date.now() - new Date(`${data.startDate}T00:00:00-03:00`)) / 864e5));
+  data.numbers.cards.forEach((c) => {
+    const cell = h("div", { className: "cell" }, `<div class="v">0</div><div class="l">${c.label}</div>`);
+    $("#cards").append(cell); countUp($(".v", cell), c.value);
+  });
+  $("#funny").innerHTML = data.numbers.funny.map(([v, l]) => `<div class="cell"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
+  $("#wx").innerHTML = data.numbers.forecast.map((f) => `<li><span class="when">${f.when}</span><span class="sky">${f.sky}</span><span class="txt">${f.text}</span><span class="pct">${f.chance}</span></li>`).join("");
+}
+$("#measure-btn").onclick = (e) => {
+  e.target.remove();
+  const out = $("#measure-out"); let n = 0;
+  out.innerHTML = `<div class="calc">calculating… <span id="calcn">0</span></div>`;
+  const iv = setInterval(() => {
+    n = n * 3 + Math.floor(Math.random() * 999);
+    $("#calcn").textContent = n.toLocaleString("en");
+    if (n > 1e15) {
+      clearInterval(iv);
+      out.innerHTML = `<div class="err">ERROR: VALUE EXCEEDS LIMITS</div><p class="serif" style="font-size:24px;font-style:italic;margin-top:18px;line-height:1.35">Some things are simply too big to fit into numbers.<br>What you mean to me is one of them.</p><img class="us fade" src="assets/nosotros/abrazo.webp" alt="" style="width:min(260px,60%);margin:22px auto 0"><p class="label" style="margin-top:14px;opacity:.8">— pichulino</p>`;
+    }
+  }, reduceMotion() ? 0 : 110);
+};
+
+/* ───── open when ───── */
+function openLetter(l) {
+  openModal(`<span class="label" style="color:var(--mute)">open when</span><h3>${l.t}</h3>${l.img ? `<img src="${l.img}" style="border-radius:6px;margin-bottom:12px">` : ""}<p class="body">${l.body}</p>
+    ${l.canvas ? `<canvas id="cv" width="600" height="600"></canvas><div class="row" id="cvtools"></div>` : ""}`, () => l.canvas && initCanvas());
+  if (l.confetti) confetti();
+}
+data.openWhen.categories.forEach((c) => {
+  const sec = h("section", { className: "cat" }, `<div class="label" style="--c:${c.color}"><i></i>${c.name}</div>`);
+  c.letters.forEach((l) => sec.append(h("button", { className: "env", onclick: () => openLetter(l) }, `<span><small>open when</small>${l.t}</span>`)));
+  $("#cats").append(sec);
+});
+$("#random").onclick = () => {
+  const all = data.openWhen.categories.flatMap((c) => c.letters);
+  openLetter(all[Math.floor(Math.random() * all.length)]);
+};
+$("#hugbtn").onclick = () => {
+  const hugs = data.openWhen.hugs, msg = hugs[Math.floor(Math.random() * hugs.length)];
+  openModal(`<h3>Come here</h3>
+    <div class="hug"><svg viewBox="0 0 140 80" fill="none" stroke="#16161a" stroke-width="1.5" stroke-linecap="round">
+      <g class="a"><circle cx="40" cy="22" r="10"/><path d="M40 32v28M40 40l14 8M40 60l-8 16M40 60l8 16"/></g>
+      <g class="b"><circle cx="100" cy="22" r="10"/><path d="M100 32v28M100 40l-14 8M100 60l-8 16M100 60l8 16"/></g>
+    </svg></div>
+    <p class="body" style="text-align:center">${msg}</p><p class="label" style="text-align:center;color:var(--mute);margin-top:12px">aquí sonaría un audio al azar</p>`,
+    (el) => setTimeout(() => $(".hug", el).classList.add("go"), 200));
+};
+
+function initCanvas() {
+  const cv = $("#cv"), ctx = cv.getContext("2d");
+  let color = "#16161a", drawing = false;
+  ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ["#16161a", "#2f4bd8", "#e0347f", "#a8d84a", "#f08a24"].forEach((c) => $("#cvtools").append(h("button", { className: "swatch", style: `background:${c}`, ariaLabel: c, onclick: () => color = c })));
+  $("#cvtools").append(h("button", { textContent: "clear", onclick: () => ctx.clearRect(0, 0, 600, 600) }));
+  $("#cvtools").append(h("button", { textContent: "download", onclick: () => h("a", { download: "for-you.png", href: cv.toDataURL() }).click() }));
+  const pos = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * 600 / r.width, (e.clientY - r.top) * 600 / r.height]; };
+  cv.onpointerdown = (e) => { drawing = true; ctx.strokeStyle = color; ctx.beginPath(); ctx.moveTo(...pos(e)); cv.setPointerCapture(e.pointerId); };
+  cv.onpointermove = (e) => { if (drawing) { ctx.lineTo(...pos(e)); ctx.stroke(); } };
+  cv.onpointerup = () => drawing = false;
+}
+
+function confetti() {
+  if (reduceMotion()) return;
+  const cv = $("#confetti"), ctx = cv.getContext("2d");
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cols = ["#2f4bd8", "#e0347f", "#a8d84a", "#f08a24", "#16161a"];
+  const ps = Array.from({ length: 90 }, () => ({ x: Math.random() * cv.width, y: -20 - Math.random() * cv.height / 2, vy: 2 + Math.random() * 3, vx: -1.5 + Math.random() * 3, c: cols[Math.floor(Math.random() * 5)], a: Math.random() * 6 }));
+  let f = 0;
+  (function tick() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ps.forEach((p) => { p.x += p.vx; p.y += p.vy; p.a += .08; ctx.fillStyle = p.c; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillRect(-3, -1.5, 6, 3); ctx.restore(); });
+    if (f++ < 220) requestAnimationFrame(tick); else ctx.clearRect(0, 0, cv.width, cv.height);
+  })();
+}
+
+go(location.hash.slice(1) || "home");
+</script>
+</body>
+</html>

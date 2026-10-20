@@ -1,0 +1,16 @@
+contenido/
+.DS_Store
+/.[ac]*/
+/.audit/
+/prototipos/
+/opcion-*.html
+/opciones.html
+/*.jpg
+/*.jpeg
+/*.png
+/CLAUDE.md
+/CONTENIDO.md
+/ESTADO.md
+/HANDOFF.md
+/tools/opciones/
+/assets/stickers/originales/
