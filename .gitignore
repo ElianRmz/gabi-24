@@ -1,6 +1,7 @@
 contenido/
 .DS_Store
-/.[ac]*/
+/.agents/
+/.claude/
 /.audit/
 /prototipos/
 /opcion-*.html

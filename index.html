@@ -286,7 +286,6 @@ html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scro
 .hug.go .a{transform:translateX(16px)}.hug.go .b{transform:translateX(-16px)}
 .deco{display:block;margin:0 auto;height:auto}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:60}
-.proto{position:fixed;bottom:10px;right:10px;z-index:70;font:10px var(--mono);letter-spacing:.08em;background:var(--ink);color:var(--cream);padding:4px 10px;border-radius:99px;opacity:.7}
 
 /* ───────── base móvil (skills: mobile-native + emil-design-eng) ───────── */
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1)}
@@ -299,15 +298,12 @@ button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webk
 ::selection{background:#e0347f2e}
 @media (hover:hover) and (pointer:fine){.opt:hover{border-color:var(--ink)}.hugbtn:hover{background:var(--ink);color:var(--cream)}.env:hover::after{transform:translateX(4px);color:var(--ink)}}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.4s;animation-timing-function:var(--ease-out)}
-.proto{text-decoration:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
-<div class="proto">PROTOTIPO · DATOS DE EJEMPLO</div>
-
 <!-- PORTADA -->
 <main id="home" class="view">
   <h1 class="home-title">made for you, <i>pichulina</i></h1>
@@ -451,19 +447,25 @@ const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matche
 
 /* ───── navegación ───── */
 const isOpen = (key) => data.preview || new Date() >= new Date(data.unlock[key]);
-function go(id) {
-  if (!document.getElementById(id)) id = "home";
+function go(id, historyMode = "push") {
+  const view = $$(".view").find((v) => v.id === id);
+  const door = $$('[data-go][data-lock]').find((b) => b.dataset.go === id);
+  if (!view || (door && !isOpen(door.dataset.lock))) {
+    id = "home";
+    historyMode = "replace";
+  }
   const swap = () => { $$(".view").forEach((v) => v.classList.toggle("on", v.id === id)); scrollTo(0, 0); onView(id); };
   // fundido suave entre portada y secciones, si el navegador lo soporta
   document.startViewTransition && !reduceMotion() && $(".view.on") ? document.startViewTransition(swap) : swap();
-  if (location.hash.slice(1) !== id) history.pushState(null, "", "#" + id);
+  if (location.hash.slice(1) !== id) history[historyMode === "push" ? "pushState" : "replaceState"](null, "", "#" + id);
 }
 document.addEventListener("click", (e) => {
   const b = e.target.closest("[data-go]");
-  if (!b || (b.dataset.lock && !isOpen(b.dataset.lock))) return;
+  if (!b) return;
   go(b.dataset.go);
 });
-addEventListener("popstate", () => go(location.hash.slice(1) || "home"));
+addEventListener("popstate", () => go(location.hash.slice(1) || "home", "replace"));
+addEventListener("hashchange", () => go(location.hash.slice(1) || "home", "replace"));
 $$("[data-lock]").forEach((b) => {
   const d = new Date(data.unlock[b.dataset.lock]).toLocaleDateString("en", { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" });
   b.querySelector(".lock").textContent = !isOpen(b.dataset.lock) ? "opens " + d : data.preview ? "preview · opens " + d : "";
@@ -746,7 +748,7 @@ function confetti() {
   })();
 }
 
-go(location.hash.slice(1) || "home");
+go(location.hash.slice(1) || "home", "replace");
 </script>
 </body>
 </html>

@@ -6,7 +6,7 @@ const M = (n) => `assets/miyazaki/m${String(n).padStart(2, "0")}.jpg`; // fondos
 
 window.DATA = {
   // true = ignora los candados por fecha (para ver el prototipo antes del 20)
-  preview: true,
+  preview: false,
   unlock: {
     anniversary: "2026-10-20T00:00:00-03:00", // medianoche en Curitiba
     birthday: "2026-10-21T00:00:00-03:00",
