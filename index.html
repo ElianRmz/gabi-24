@@ -111,6 +111,8 @@ img{display:block;max-width:100%}
 .cap .hint{margin-top:12px;font-family:var(--mono);font-style:normal;font-size:11px;opacity:.75}
 /* su dibujo: entra con un rebote y se puede mover con el dedo (ver bindPeel) */
 .doodle{position:absolute;right:16px;top:44%;z-index:3;width:min(88px,22%)}
+/* los recortes de ustedes son anchos: se ven más grandes que los dibujos */
+.doodle.foto{width:min(128px,34%)}
 .doodle .peel{opacity:0;transform:scale(.6) rotate(-14deg);transition:opacity .3s var(--ease-out) .7s,transform .8s cubic-bezier(.34,1.56,.64,1) .7s}
 .frame.on .doodle .peel{opacity:1;transform:none;animation:wiggle 1s var(--ease-out) 1.8s}
 @keyframes wiggle{25%{rotate:calc(var(--rot,6deg) - 7deg)}60%{rotate:calc(var(--rot,6deg) + 5deg)}}
@@ -128,6 +130,7 @@ img{display:block;max-width:100%}
   .f-us{left:auto;right:9%;max-width:24%;max-height:min(40%,400px)}
   .stack{top:9%;bottom:auto;right:9%;width:min(210px,14vw)}
   .doodle{right:30%;top:11%;width:min(120px,9vw)}
+  .doodle.foto{width:min(176px,14vw)}
   .fui{left:8%;right:8%}
   .endart{left:68%;top:50%;width:min(44%,600px)}
   /* flip en compu: ustedes arriba a la derecha y las polaroids abajo, cambian de lugar */
@@ -163,8 +166,10 @@ img{display:block;max-width:100%}
 .paper::before{content:"";position:absolute;top:-11px;left:50%;width:76px;height:22px;background:var(--tape);opacity:.6;transform:translateX(-50%) rotate(2deg)}
 .paper:nth-child(4n+1){--rot:-.7deg;--tape:var(--lime)}.paper:nth-child(4n+2){--rot:.6deg;--tape:var(--magenta)}.paper:nth-child(4n+3){--rot:-.4deg;--tape:var(--cobalt)}.paper:nth-child(4n){--rot:.8deg;--tape:var(--lime)}
 @supports (animation-timeline:view()){
-  .paper,.print,.notes .cell,.tickets .cell{animation:settle linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+  .paper,.print{animation:settle linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
   @keyframes settle{from{opacity:0;translate:0 40px;scale:.97}}
+  /* en las páginas con snap la entrada la maneja .page.in (ver "dinamismo" abajo) */
+  .paged .paper,.paged .print,.paged .tickets .cell{animation:none}
 }
 .ph{font-family:var(--serif);font-weight:400;font-size:clamp(28px,6vw,36px);line-height:1.05;margin-bottom:16px;text-wrap:balance}
 .q{font-family:var(--serif);font-size:24px;line-height:1.2;margin-bottom:16px}
@@ -202,32 +207,54 @@ img{display:block;max-width:100%}
 .big{text-align:center}
 .big b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(80px,22vw,150px);line-height:1.15;font-variant-numeric:lining-nums tabular-nums;margin-bottom:10px}
 .big .label{display:block}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
-@media (max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
-.cell{padding:16px 14px;text-align:left;background:#fffdf8;box-shadow:0 1px 2px #16161a14,0 14px 26px -18px #16161a60}
-.cell .v{font-family:var(--serif);font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
-.cell .l{font-size:12px;color:var(--mute);margin-top:4px}
-.tickets .cell{border-left:1px dashed #16161a33;rotate:var(--rot,0deg)}
-.tickets .cell:nth-child(3n+1){--rot:-1deg}.tickets .cell:nth-child(3n+2){--rot:.7deg}.tickets .cell:nth-child(3n){--rot:-.3deg}
-/* estadísticas graciosas: notas adhesivas en sus colores */
-.notes .cell{aspect-ratio:1;display:flex;flex-direction:column;justify-content:space-between;rotate:var(--rot,0deg);box-shadow:0 1px 1px #16161a14,0 16px 22px -16px #16161a70}
-.notes .cell:nth-child(4n+1){--rot:-2deg;background:color-mix(in srgb,var(--lime) 38%,#fffdf8)}
-.notes .cell:nth-child(4n+2){--rot:1.6deg;background:color-mix(in srgb,var(--magenta) 20%,#fffdf8)}
-.notes .cell:nth-child(4n+3){--rot:-1deg;background:color-mix(in srgb,var(--cobalt) 16%,#fffdf8)}
-.notes .cell:nth-child(4n){--rot:2.2deg;background:#fdf1b8}
-.grid>.cell{min-width:0}
-.notes .cell .v{font-size:clamp(24px,7vw,40px)}
-.notes .cell .l{color:#16161acc;font-size:13px}
-@media (min-width:521px){.notes{grid-template-columns:repeat(4,1fr)}}
-.tickets .cell:last-child:nth-child(odd){grid-column:1/-1}
-@media (min-width:521px){.tickets .cell:last-child:nth-child(odd){grid-column:auto}}
+/* ───── números: hoja de datos (Counting us y The funny statistics) ─────
+   una hoja crema con borde grueso y sombra dura; el § marca el índice; filas separadas por reglas.
+   los números usan cqi: miden contra la hoja o la fila, no contra la pantalla, así "1,000,000+" nunca se parte */
+.nb-sheet{position:relative;container-type:inline-size;background:var(--cream);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);color:var(--ink)}
+.nb-head{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;column-gap:18px;padding:16px 18px 14px;border-bottom:2px solid var(--magenta)}
+.nb-sec{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.nb-title{font-family:var(--serif);font-weight:500;font-size:min(10cqi,46px);line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.nb-rows,.nb-stats{list-style:none;margin:0;padding:0}
+.nb-row,.nb-stat{position:relative;padding:12px 18px;transition:background-color .2s var(--ease-out),color .2s var(--ease-out)}
+/* la regla de arriba de cada fila: la dibuja nb-draw al entrar */
+.nb-row::before,.nb-stat::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--ink);transform-origin:left}
+/* índice | número (ancho fijo, para que el contador no empuje la etiqueta) | etiqueta; todo alineado por la línea base */
+.nb-row{display:grid;grid-template-columns:34px auto minmax(0,1fr);align-items:baseline;column-gap:14px}
+.nb-idx{font-family:var(--mono);font-size:11px;letter-spacing:.08em}
+.nb-n{font-family:var(--serif);font-weight:500;font-size:min(17cqi,68px);line-height:1;width:2em;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
+/* foto opcional al final de la fila (data.numbers.cards[].img) */
+.nb-row:has(.nb-pic){grid-template-columns:34px auto minmax(0,1fr) auto}
+.nb-picbtn{align-self:center;display:block;padding:0;cursor:zoom-in;line-height:0}
+.nb-full{display:block;width:100%;border:2px solid var(--ink)}
+.sheet:has(.nb-full){padding-top:46px}
+.nb-pic{width:58px;aspect-ratio:1;object-fit:cover;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.nb-row:active .nb-pic{border-color:var(--cream);box-shadow:3px 3px 0 var(--cream)}
+@media (hover:hover) and (pointer:fine){.nb-row:hover .nb-pic{border-color:var(--cream);box-shadow:3px 3px 0 var(--cream)}}
+.nb-l{font-family:var(--mono);font-size:11px;line-height:1.4;letter-spacing:.12em;text-transform:uppercase;min-width:0}
+/* estadísticas: cada una es un bloque con regla gruesa arriba; el valor va enorme y la frase, pequeña abajo */
+.nb-stat{container-type:inline-size;display:grid;grid-template-columns:34px minmax(0,1fr);align-items:baseline;column-gap:14px;padding:16px 18px 18px}
+.nb-stat::before{height:3px}
+.nb-val{grid-column:2;font-family:var(--serif);font-weight:500;font-size:min(16cqi,76px);line-height:1;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
+.nb-stat .nb-l{grid-column:2;margin-top:10px}
+/* al pasar el cursor (solo mouse fino) o al tocar, la fila se invierte: fondo tinta, texto crema */
+.nb-row:active,.nb-stat:active{background:var(--ink);color:var(--cream)}
+@media (hover:hover) and (pointer:fine){.nb-row:hover,.nb-stat:hover{background:var(--ink);color:var(--cream)}}
+@keyframes nb-in{from{opacity:0;translate:0 10px}}
+@keyframes nb-draw{from{transform:scaleX(0)}}
+@media (prefers-reduced-motion:no-preference){
+  .paged .page:not(.in) .nb-row,.paged .page:not(.in) .nb-stat{opacity:0}
+  .paged .page.in .nb-row,.paged .page.in .nb-stat{animation:nb-in .5s var(--ease-out) both;animation-delay:calc(.15s + var(--i,0) * 60ms)}
+  .paged .page.in .nb-row::before,.paged .page.in .nb-stat::before{animation:nb-draw .6s var(--ease-out) both;animation-delay:calc(.15s + var(--i,0) * 60ms)}
+}
 /* forecast: reporte del clima, una fila por "día" */
 .wx{list-style:none;margin-top:6px;padding:0}
-.wx li{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"when when pct" "sky txt txt";column-gap:12px;row-gap:2px;padding:12px 0;border-bottom:1px dashed #16161a33}
-.wx .when{grid-area:when;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.wx .sky{grid-area:sky;font-size:26px;line-height:1;width:32px;text-align:center;color:var(--cobalt)}
+.wx li{display:grid;grid-template-columns:32px 1fr auto;grid-template-areas:"when when pct" "sky txt txt";align-items:start;column-gap:12px;row-gap:2px;padding:12px 0;border-bottom:1px dashed #16161a33}
+.wx .when{grid-area:when;align-self:start;font-family:var(--mono);font-size:11px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+/* el icono va centrado en la primera línea del texto de su fila; la columna mide 32px y el glifo se centra dentro */
+.wx .sky{grid-area:sky;justify-self:center;width:32px;font-size:26px;line-height:25px;height:25px;text-align:center;color:var(--cobalt)}
 .wx .txt{grid-area:txt;font-family:var(--serif);font-size:19px;line-height:1.25}
-.wx .pct{grid-area:pct;font-family:var(--mono);font-size:11px;color:var(--magenta)}
+/* el porcentaje va en la misma línea de arriba que "when" (misma fuente y altura de línea) */
+.wx .pct{grid-area:pct;align-self:start;font-family:var(--mono);font-size:11px;line-height:1.4;color:var(--magenta)}
 .page>.pst{position:absolute;width:var(--w)!important;max-width:none;margin:0;z-index:2}
 /* Experiment y Numbers: una página a pantalla completa por sección, cada una con su fondo Ghibli; el scroll se detiene en cada página */
 html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scroll-snap-type:y mandatory;scroll-padding-top:var(--barh,53px)}
@@ -240,6 +267,24 @@ html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scro
 .page .ph.tag{display:table;margin:0 auto;background:#fffdf8;padding:8px 18px 10px;rotate:-1deg;box-shadow:0 14px 26px -18px #16161a60}
 .down{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));translate:-50% 0;width:auto!important;font-size:20px;color:#fff;text-shadow:0 1px 6px #0008;animation:bob 1.8s ease-in-out infinite}
 @keyframes bob{50%{translate:-50% 6px}}
+/* ───── dinamismo del Experiment y Numbers ─────
+   página nueva: el papel sube y se asienta, luego entran las pegatinas con un rebote leve y los elementos en cascada.
+   cada pregunta nueva: las opciones entran escalonadas; acierto = pulso, fallo = sacudida corta */
+@media (prefers-reduced-motion:no-preference){
+  .paged .page>:not(.pst):not(.down){transition:opacity .5s var(--ease-out),translate .5s var(--ease-out),scale .5s var(--ease-out)}
+  .paged .page:not(.in)>:not(.pst):not(.down){opacity:0;translate:0 28px;scale:.98}
+  .paged .page>.pst{transition:opacity .3s var(--ease-out) .3s,scale .5s cubic-bezier(.34,1.56,.64,1) .3s}
+  .paged .page:not(.in)>.pst{opacity:0;scale:.85}
+  .paged .page .wx li{transition:opacity .4s var(--ease-out),translate .4s var(--ease-out);transition-delay:calc(.2s + var(--i,0) * 70ms)}
+  .paged .page:not(.in) .wx li{opacity:0;translate:0 16px}
+  .opts .opt{animation:rise .35s var(--ease-out) both;animation-delay:calc(var(--i,0) * 50ms)}
+  .opts .opt.ok{animation:okpop .3s var(--ease-out)}
+  .opts .opt.no{animation:nope .3s var(--ease-out)}
+  .said{animation:fade .4s var(--ease-out) both}
+  #results.done .report tr{animation:rise .45s var(--ease-out) both;animation-delay:calc(.25s + var(--i,0) * 80ms)}
+}
+@keyframes okpop{50%{scale:1.03}}
+@keyframes nope{25%{translate:-5px 0}75%{translate:5px 0}}
 .measure{color:#fff;text-align:center;align-items:center}
 .measure>button{width:auto}
 .measure::before{content:"";position:absolute;inset:0;background:#0000008c;z-index:-1}
@@ -293,11 +338,22 @@ html{overscroll-behavior:none;-webkit-text-size-adjust:100%}
 button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 :where(button){transition:transform .14s var(--ease-out)}
 :where(button):active{transform:scale(.97)}
-.opt,.cell{transition:border-color .2s,transform .14s var(--ease-out)}
+.opt{transition:border-color .2s,transform .14s var(--ease-out)}
 :focus-visible{outline:1.5px solid currentColor;outline-offset:3px}
 ::selection{background:#e0347f2e}
 @media (hover:hover) and (pointer:fine){.opt:hover{border-color:var(--ink)}.hugbtn:hover{background:var(--ink);color:var(--cream)}.env:hover::after{transform:translateX(4px);color:var(--ink)}}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.4s;animation-timing-function:var(--ease-out)}
+/* cambio de pestaña: la barra queda fija y la página se desliza un poco según el sentido */
+#anniv .bar{view-transition-name:anniv-bar}
+html.tab-swap::view-transition-old(anniv-bar),html.tab-swap::view-transition-new(anniv-bar){animation:none}
+html[data-tab-dir="fwd"].tab-swap::view-transition-old(root){animation-name:tab-out-l}
+html[data-tab-dir="fwd"].tab-swap::view-transition-new(root){animation-name:tab-in-r}
+html[data-tab-dir="back"].tab-swap::view-transition-old(root){animation-name:tab-out-r}
+html[data-tab-dir="back"].tab-swap::view-transition-new(root){animation-name:tab-in-l}
+@keyframes tab-out-l{to{opacity:0;transform:translateX(-16px)}}
+@keyframes tab-in-r{from{opacity:0;transform:translateX(16px)}}
+@keyframes tab-out-r{to{opacity:0;transform:translateX(16px)}}
+@keyframes tab-in-l{from{opacity:0;transform:translateX(-16px)}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
@@ -356,9 +412,9 @@ button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webk
       </header>
       <span class="down" aria-hidden="true">↓</span>
     </div>
-    <div class="page" style="--bg:url(assets/miyazaki/m24.jpg)"><article class="paper"><h2 class="ph">How well do you know us?</h2><div id="quiz"></div></article></div>
-    <div class="page" style="--bg:url(assets/miyazaki/m15.jpg)"><article class="paper"><h2 class="ph">The memory test</h2><div id="memory"></div></article></div>
-    <div class="page" style="--bg:url(assets/miyazaki/m44.jpg)"><article class="paper"><h2 class="ph">Who said it?</h2><div id="said"></div></article></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m24.jpg)"><article class="paper"><h2 class="ph">How well do you know us?</h2><div id="quiz"></div></article><span class="peel cut pst" style="--rot:-6deg;--w:112px;right:10px;bottom:14px"><img src="assets/nosotros/u18.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m15.jpg)"><article class="paper"><h2 class="ph">The memory test</h2><div id="memory"></div></article><span class="peel cut pst" style="--rot:5deg;--w:104px;left:10px;top:14px"><img src="assets/nosotros/u19.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m44.jpg)"><article class="paper"><h2 class="ph">Who said it?</h2><div id="said"></div></article><span class="peel cut pst" style="--rot:-5deg;--w:118px;right:8px;bottom:16px"><img src="assets/nosotros/u20.webp" alt=""></span></div>
     <div class="page" style="--bg:url(assets/miyazaki/m26.jpg)">
         <article class="paper" id="results"><h2 class="ph">Final results</h2>
           <p class="pending">Results pending… finish the 3 experiments first. <span id="labprog">0 / 3</span></p>
@@ -395,8 +451,8 @@ button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webk
         <p class="quote">And somehow, I still wish every day had a few more hours with you.</p>
       </article>
     </div>
-    <div class="page" style="--bg:url(assets/miyazaki/m40.jpg)"><div class="grid tickets" id="cards"></div><span class="peel cut pst" style="--rot:6deg;--w:70px;right:16px;bottom:24px"><img src="assets/stickers/personaje-5.webp" alt=""></span></div>
-    <div class="page" style="--bg:url(assets/miyazaki/m03.jpg)"><div><h2 class="ph tag">The funny statistics</h2><div class="grid notes" id="funny"></div></div><span class="peel cut pst" style="--rot:-6deg;--w:100px;left:12px;bottom:22px"><img src="assets/stickers/arte-03.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m40.jpg)"><section class="nb-sheet"><header class="nb-head"><span class="nb-sec">§ 03</span><h2 class="nb-title">Counting us</h2></header><ol class="nb-rows" id="cards"></ol></section><span class="peel cut pst" style="--rot:6deg;--w:46px;right:14px;top:0"><img src="assets/stickers/personaje-5.webp" alt=""></span></div>
+    <div class="page" style="--bg:url(assets/miyazaki/m03.jpg)"><section class="nb-sheet"><header class="nb-head"><span class="nb-sec">§ 04</span><h2 class="nb-title">The funny statistics</h2></header><ol class="nb-stats" id="funny"></ol></section><span class="peel cut pst" style="--rot:-6deg;--w:88px;right:10px;bottom:10px"><img src="assets/stickers/arte-03.webp" alt=""></span></div>
     <div class="page" style="--bg:url(assets/miyazaki/m71.jpg)">
       <article class="paper" style="--rot:.5deg;--tape:var(--magenta)">
         <span class="label" style="color:var(--mute)">us · weather report</span>
@@ -470,14 +526,27 @@ $$("[data-lock]").forEach((b) => {
   const d = new Date(data.unlock[b.dataset.lock]).toLocaleDateString("en", { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" });
   b.querySelector(".lock").textContent = !isOpen(b.dataset.lock) ? "opens " + d : data.preview ? "preview · opens " + d : "";
 });
-$$(".tab").forEach((t) => t.onclick = () => {
-  $$(".tab").forEach((x) => x.classList.toggle("on", x === t));
-  $$(".panel").forEach((p) => p.classList.toggle("on", p.id === "p-" + t.dataset.tab));
-  $("#anniv").dataset.tab = t.dataset.tab;
-  scrollTo(0, 0);
-  if (t.dataset.tab === "numbers") startNumbers();
-  onTab(t);
-});
+// cambio de pestaña con el mismo fundido que go(); la barra no se mueve y la página se desliza según el orden de las pestañas
+let tabSwap = null;
+function switchTab(t) {
+  const tabs = $$(".tab");
+  const prev = tabs.indexOf(tabs.find((x) => x.classList.contains("on")));
+  const swap = () => {
+    tabs.forEach((x) => x.classList.toggle("on", x === t));
+    $$(".panel").forEach((p) => p.classList.toggle("on", p.id === "p-" + t.dataset.tab));
+    $("#anniv").dataset.tab = t.dataset.tab;
+    scrollTo(0, 0);
+    if (t.dataset.tab === "numbers") startNumbers();
+    onTab(t);
+  };
+  if (!document.startViewTransition || reduceMotion() || tabs[prev] === t) return swap();
+  const root = document.documentElement;
+  const token = (tabSwap = {});
+  root.dataset.tabDir = tabs.indexOf(t) > prev ? "fwd" : "back";
+  root.classList.add("tab-swap");
+  document.startViewTransition(swap).finished.finally(() => tabSwap === token && root.classList.remove("tab-swap"));
+}
+$$(".tab").forEach((t) => t.onclick = () => switchTab(t));
 
 /* ───── modal ───── */
 const modal = $("#modal");
@@ -498,10 +567,21 @@ const film = { i: 0, n: 0 };
 const TAPE = ["var(--lime)", "var(--magenta)", "var(--cobalt)"];
 // todas las pegatinas movibles son recortes con transparencia (.peel.cut), nunca impresiones con marco.
 // Un dibujo nuevo sin transparencia se convierte con: python3 tools/sticker-png.py
-// ninguna imagen se repite en el sitio: pichulinos (portada) y tortugas (Open When) ya se usan fuera,
-// así que la película reparte estos en escenas espaciadas
-const doodles = ["dinos", "peces", "cafe", "retrato-peces", "arte-08"].map((n) => ({ src: `assets/stickers/${n}.webp` }));
-const doodleAt = { 1: 0, 4: 1, 7: 2, 10: 3, 11: 4 };
+// una pegatina por escena (ruta completa); ninguna imagen se repite en el sitio
+const doodleAt = {
+  0: { src: "assets/stickers/arte-01.webp" },
+  1: { src: "assets/stickers/dinos.webp" },
+  2: { src: "assets/stickers/arte-06.webp" },
+  3: { src: "assets/stickers/personaje-2.webp" },
+  4: { src: "assets/stickers/peces.webp" },
+  5: { src: "assets/stickers/personaje-3.webp" },
+  6: { src: "assets/nosotros/u15.webp", foto: true },
+  7: { src: "assets/stickers/cafe.webp" },
+  8: { src: "assets/nosotros/u16.webp", foto: true },
+  9: { src: "assets/nosotros/u17.webp", foto: true },
+  10: { src: "assets/stickers/retrato-peces.webp" },
+  11: { src: "assets/stickers/arte-08.webp" },
+};
 const peel = (d, rot) => `<span class="peel cut" style="--rot:${rot}deg"><img src="${d.src}" alt=""></span>`;
 const shot = (src) => `<div class="shot"><img src="${src}" alt="" draggable="false"></div>`;
 // fondo de pantalla completa y, si hay, ustedes (.f-us) anclados a una esquina de lo visible
@@ -512,8 +592,8 @@ function renderFilm() {
     .concat(data.habits.map((x, k) => {
       // la de hasta arriba (última en el DOM) es la foto que se ve; las de atrás quedan en abanico
       const photos = x.img ? [...(x.more || [])].reverse().concat(x.img) : [];
-      const d = x.cut ? { src: x.cut, cut: true } : doodles[doodleAt[k]];
-      return `<div class="frame${x.flip ? " flip" : ""}" style="--tape:${TAPE[k % 3]}">${scene(x.bg, x.us)}${photos.length ? `<div class="stack${photos.length > 1 ? " many" : ""}">${photos.map(shot).join("")}</div>` : ""}<div class="cap"><span class="label">little thing ${String(k + 1).padStart(2, "0")}</span><h2>${x.t}</h2><p>${x.d}</p>${photos.length > 1 ? `<p class="hint">tap or throw the photo</p>` : ""}</div>${d ? `<div class="doodle">${peel(d, k % 2 ? -7 : 6)}</div>` : ""}</div>`;
+      const d = x.cut ? { src: x.cut, cut: true } : doodleAt[k];
+      return `<div class="frame${x.flip ? " flip" : ""}" style="--tape:${TAPE[k % 3]}">${scene(x.bg, x.us)}${photos.length ? `<div class="stack${photos.length > 1 ? " many" : ""}">${photos.map(shot).join("")}</div>` : ""}<div class="cap"><span class="label">little thing ${String(k + 1).padStart(2, "0")}</span><h2>${x.t}</h2><p>${x.d}</p>${photos.length > 1 ? `<p class="hint">tap or throw the photo</p>` : ""}</div>${d ? `<div class="doodle${d.foto ? " foto" : ""}">${peel(d, k % 2 ? -7 : 6)}</div>` : ""}</div>`;
     }))
     .concat(`<div class="frame end">${scene(A.end.bg)}<div class="cap"><h1><i>and more coming…</i></h1><span class="label">— pichulino</span></div><figure class="endart"><img src="${A.end.art}" alt="Yo te llevo dentro hasta la raíz"></figure></div>`);
   $("#reel").innerHTML = frames.join("");
@@ -606,6 +686,14 @@ addEventListener("resize", () => $("#anniv").classList.contains("on") && setBarH
 /* ───── experimento ───── */
 // los resultados finales aparecen cuando termina los 3 juegos
 const lab = new Set();
+// cada página del Experiment y de Numbers se "acomoda" la primera vez que llega a la pantalla
+const pageIO = new IntersectionObserver((es) => es.forEach((e) => {
+  if (e.isIntersecting) { e.target.classList.add("in"); e.target.dispatchEvent(new Event("pagein")); pageIO.unobserve(e.target); }
+}), { threshold: 0.45 });
+$$(".paged .page").forEach((p) => pageIO.observe(p));
+// corre fn cuando la página de el aparece por primera vez (los contadores cuentan frente a ella, no antes)
+const onPageIn = (el, fn) => { const pg = el.closest(".page"); !pg || pg.classList.contains("in") ? fn() : pg.addEventListener("pagein", fn, { once: true }); };
+$$(".report tr").forEach((tr, i) => tr.style.setProperty("--i", i));
 function labDone(k) {
   lab.add(k);
   $("#labprog").textContent = `${lab.size} / 3`;
@@ -614,7 +702,7 @@ function labDone(k) {
 function renderQuiz(i = 0) {
   const el = $("#quiz"), q = data.quiz[i];
   if (!q) return labDone("quiz"), el.innerHTML = `<p class="feedback">Experiment complete.</p>`;
-  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.quiz.length}</p><p class="q">${q.q}</p><div class="opts">${q.options.map((o, j) => `<button class="opt" data-j="${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
+  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.quiz.length}</p><p class="q">${q.q}</p><div class="opts">${q.options.map((o, j) => `<button class="opt" data-j="${j}" style="--i:${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
   $$(".opt", el).forEach((b) => b.onclick = () => {
     const ok = +b.dataset.j === q.answer;
     b.classList.add(ok ? "ok" : "no");
@@ -625,7 +713,7 @@ function renderQuiz(i = 0) {
 function renderMemory(i = 0) {
   const el = $("#memory"), m = data.memory[i];
   if (!m) return labDone("memory"), el.innerHTML = `<p class="feedback">Memory: excellent.</p>`;
-  el.innerHTML = `<div class="blurframe"><img class="blurimg" src="${m.img}" alt="" draggable="false"></div><p class="q">${m.q || "Where was this?"}</p><div class="opts">${m.options.map((o, j) => `<button class="opt" data-j="${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
+  el.innerHTML = `<div class="blurframe"><img class="blurimg" src="${m.img}" alt="" draggable="false"></div><p class="q">${m.q || "Where was this?"}</p><div class="opts">${m.options.map((o, j) => `<button class="opt" data-j="${j}" style="--i:${j}">${o}</button>`).join("")}</div><div class="feedback"></div>`;
   // ayudita: al pasar el mouse (o tocar en el teléfono) la foto se ve 2 segundos, máximo 2 veces por foto
   const img = $(".blurimg", el);
   let peeks = 2;
@@ -651,7 +739,7 @@ function renderMemory(i = 0) {
 function renderSaid(i = 0) {
   const el = $("#said"), q = data.saidIt[i];
   if (!q) return labDone("said"), el.innerHTML = `<p class="feedback">Conclusion: we are both a little weird. Perfect match.</p>`;
-  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.saidIt.length}</p><p class="said">${q.text}</p><div class="opts who"><button class="opt" data-w="her">${data.names.her}</button><button class="opt" data-w="me">${data.names.me}</button></div><div class="feedback"></div>`;
+  el.innerHTML = `<p class="label" style="color:var(--mute)">${i + 1} / ${data.saidIt.length}</p><p class="said">${q.text}</p><div class="opts who"><button class="opt" data-w="her" style="--i:0">${data.names.her}</button><button class="opt" data-w="me" style="--i:1">${data.names.me}</button></div><div class="feedback"></div>`;
   $$(".opt", el).forEach((b) => b.onclick = () => {
     if ($(".opt.ok", el)) return;
     const ok = b.dataset.w === q.who;
@@ -673,13 +761,17 @@ function countUp(el, to, ms = 1600) {
 function startNumbers() {
   if (numbersStarted) return; numbersStarted = true;
   // días juntos, contados en hora de Curitiba: cambia solo cada medianoche
-  countUp($("#days"), Math.floor((Date.now() - new Date(`${data.startDate}T00:00:00-03:00`)) / 864e5));
-  data.numbers.cards.forEach((c) => {
-    const cell = h("div", { className: "cell" }, `<div class="v">0</div><div class="l">${c.label}</div>`);
-    $("#cards").append(cell); countUp($(".v", cell), c.value);
+  onPageIn($("#days"), () => countUp($("#days"), Math.floor((Date.now() - new Date(`${data.startDate}T00:00:00-03:00`)) / 864e5)));
+  // una fila por cada dato de data.numbers.cards; el número cuenta cuando la página entra
+  data.numbers.cards.forEach((c, i) => {
+    const row = h("li", { className: "nb-row" }, `<span class="nb-idx">${String(i + 1).padStart(2, "0")}</span><span class="nb-n">0</span><span class="nb-l">${c.label}</span>${c.img ? `<button class="nb-picbtn" aria-label="ver foto"><img class="nb-pic" src="${c.img}" alt=""></button>` : ""}`);
+    // la miniatura abre la foto completa
+    if (c.img) $(".nb-picbtn", row).onclick = () => openModal(`<img class="nb-full" src="${c.full || c.img}" alt="${c.label}">`);
+    row.style.setProperty("--i", i);
+    $("#cards").append(row); onPageIn(row, () => countUp($(".nb-n", row), c.value));
   });
-  $("#funny").innerHTML = data.numbers.funny.map(([v, l]) => `<div class="cell"><div class="v">${v}</div><div class="l">${l}</div></div>`).join("");
-  $("#wx").innerHTML = data.numbers.forecast.map((f) => `<li><span class="when">${f.when}</span><span class="sky">${f.sky}</span><span class="txt">${f.text}</span><span class="pct">${f.chance}</span></li>`).join("");
+  $("#funny").innerHTML = data.numbers.funny.map(([v, l], i) => `<li class="nb-stat" style="--i:${i}"><span class="nb-idx">${String(i + 1).padStart(2, "0")}</span><span class="nb-val">${v}</span><span class="nb-l">${l}</span></li>`).join("");
+  $("#wx").innerHTML = data.numbers.forecast.map((f, i) => `<li style="--i:${i}"><span class="when">${f.when}</span><span class="sky">${f.sky}</span><span class="txt">${f.text}</span><span class="pct">${f.chance}</span></li>`).join("");
 }
 $("#measure-btn").onclick = (e) => {
   e.target.remove();

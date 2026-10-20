@@ -85,6 +85,7 @@ window.DATA = {
       { label: "Chicken burgers", value: 100 },
       { label: "Shared songs", value: 295 },
       { label: "Trips", value: 4 },
+      { label: "Kitten saved", value: 1, img: "assets/fotos/kitten.webp", full: "assets/fotos/kitten-full.webp" },
     ],
     funny: [
       ["99.9%", "Probability of making me smile."],
