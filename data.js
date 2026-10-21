@@ -9,7 +9,7 @@ window.DATA = {
   preview: false,
   unlock: {
     anniversary: "2026-10-20T00:00:00-03:00", // medianoche en Curitiba
-    birthday: "2026-10-21T00:00:00-03:00",
+    birthday: "2099-10-21T00:00:00-03:00", // cerrado a mano hasta nuevo aviso; para abrir: "2026-10-21T00:00:00-03:00"
   },
   startDate: "2025-11-20", // empezaron el 20 nov 2025 → el 20 oct 2026 cumplen 11 meses
 
