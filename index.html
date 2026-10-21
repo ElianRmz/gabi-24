@@ -302,10 +302,11 @@ html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scro
 
 /* ───────── OPEN WHEN ───────── */
 #open{min-height:100dvh}
-.ow-hero{position:relative;height:72dvh;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;color:#fff;padding:0 24px;overflow:hidden}
+.ow-hero{position:relative;height:72dvh;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;color:#fff;overflow:hidden}
 .ow-hero p{margin-bottom:24px}
+.ow-hero>h1,.ow-hero>p{padding:0 24px}
 .ow-hero .stage{z-index:-2}
-.ow-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 40%,#0007)}
+.ow-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 35%,#0009)}
 .ow-hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(52px,12vw,96px);line-height:.95}
 .ow-hero p{font-family:var(--serif);font-style:italic;font-size:20px;opacity:.9;margin-top:6px}
 .ded{font-family:var(--serif);font-size:22px;line-height:1.45;text-align:center}
@@ -314,17 +315,22 @@ html:has(#anniv.on[data-tab="lab"]),html:has(#anniv.on[data-tab="numbers"]){scro
 .cat .label{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:var(--mute)}
 .cat .label i{width:7px;height:7px;border-radius:50%;background:var(--c)}
 .env{display:flex;justify-content:space-between;align-items:baseline;width:100%;padding:14px 2px;border-bottom:1px solid var(--line);text-align:left;font-family:var(--serif);font-size:22px}
-.env small{font-family:var(--sans);font-size:12px;color:var(--mute);margin-right:8px}
+.env small{font-family:var(--sans);font-size:12px;color:var(--mute);margin-right:4px}
 .env::after{content:"→";font-family:var(--sans);font-size:14px;color:var(--mute);transition:transform .2s}
 .random{display:block;margin:48px auto 0;color:var(--mute);font-size:14px;border-bottom:1px solid currentColor}
 
 /* modal */
 .modal{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:#16161a99;padding:16px;backdrop-filter:blur(4px)}
-.modal.on{display:grid}
-.sheet{background:var(--cream);border-radius:14px;max-width:520px;width:100%;max-height:86dvh;overflow:auto;padding:28px 24px;position:relative;animation:fade .35s ease}
+.modal.on{display:grid;animation:veil .3s ease}
+@keyframes veil{from{opacity:0}}
+html:has(.modal.on){overflow:hidden}
+.sheet{background:var(--cream);border-radius:14px;max-width:520px;width:100%;max-height:86dvh;overflow:auto;overscroll-behavior:contain;padding:28px 24px;position:relative;animation:sheet-in .45s var(--ease-out)}
+@keyframes sheet-in{from{opacity:0;transform:translateY(24px) scale(.97)}}
 .sheet h3{font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.1;margin-bottom:12px;padding-right:28px}
 .sheet .x{position:absolute;top:12px;right:16px;font-size:22px;color:var(--mute)}
 .sheet .body{font-family:var(--serif);font-size:20px;line-height:1.5}
+.sheet .letter-img{border-radius:6px;margin-bottom:12px}
+.sign{font-family:var(--serif);font-style:italic;font-size:20px;text-align:right;color:var(--mute);margin-top:18px}
 .sheet ul{padding-left:18px}
 .sheet li{margin:4px 0}
 .gallery{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
@@ -483,12 +489,12 @@ html[data-tab-dir="back"].tab-swap::view-transition-new(root){animation-name:tab
 <main id="open" class="view">
   <nav class="bar"><button class="home" data-go="home">made for you</button></nav>
   <header class="ow-hero">
-    <div class="stage"><img class="bg" src="assets/miyazaki/m52.jpg" alt=""><img class="us" src="assets/nosotros/gala.webp" alt="" style="left:44%;top:50%;height:13%"></div>
+    <div class="stage"><img class="bg" src="assets/miyazaki/m25.jpg" alt=""><img class="us" src="assets/nosotros/gala.webp" alt="" style="left:40%;top:51%;height:11%"></div>
     <h1>Open when…</h1>
     <p>For every version of you, on every kind of day.</p>
   </header>
   <div class="wrap">
-    <p class="ded">No sé cómo serán todos los días que vienen, pero sí sé que quiero acompañarte en cada uno de ellos. Así que hice este pequeño espacio para ti.</p>
+    <p class="ded" lang="es">No sé cómo serán todos los días que vienen, pero sí sé que quiero acompañarte en cada uno de ellos. Así que hice este pequeño espacio para ti.</p>
     <button class="hugbtn" id="hugbtn">I need a hug</button>
     <div id="cats"></div>
     <button class="random" id="random">Open when you don't know what to open</button>
@@ -512,6 +518,7 @@ const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matche
 /* ───── navegación ───── */
 const isOpen = (key) => data.preview || new Date() >= new Date(data.unlock[key]);
 function go(id, historyMode = "push") {
+  closeModal();
   const view = $$(".view").find((v) => v.id === id);
   const door = $$('[data-go][data-lock]').find((b) => b.dataset.go === id);
   if (!view || (door && !isOpen(door.dataset.lock))) {
@@ -530,10 +537,13 @@ document.addEventListener("click", (e) => {
 });
 addEventListener("popstate", () => go(location.hash.slice(1) || "home", "replace"));
 addEventListener("hashchange", () => go(location.hash.slice(1) || "home", "replace"));
-$$("[data-lock]").forEach((b) => {
+// se vuelve a pintar cada 20 s para que la etiqueta de la puerta desaparezca si ella espera a la medianoche
+const paintLocks = () => $$("[data-lock]").forEach((b) => {
   const d = new Date(data.unlock[b.dataset.lock]).toLocaleDateString("en", { day: "numeric", month: "short", timeZone: "America/Sao_Paulo" });
   b.querySelector(".lock").textContent = !isOpen(b.dataset.lock) ? "opens " + d : data.preview ? "preview · opens " + d : "";
 });
+paintLocks();
+setInterval(paintLocks, 20000);
 // cambio de pestaña con el mismo fundido que go(); la barra no se mueve y la página se desliza según el orden de las pestañas
 let tabSwap = null;
 function switchTab(t) {
@@ -558,9 +568,11 @@ $$(".tab").forEach((t) => t.onclick = () => switchTab(t));
 
 /* ───── modal ───── */
 const modal = $("#modal");
-function openModal(html, after) { $("#modal-body").innerHTML = html; modal.classList.add("on"); after && after($("#modal-body")); }
-modal.onclick = (e) => { if (e.target === modal || e.target.closest(".x")) modal.classList.remove("on"); };
-addEventListener("keydown", (e) => e.key === "Escape" && modal.classList.remove("on"));
+function openModal(html, after) { $("#modal-body").innerHTML = html; modal.classList.add("on"); $(".sheet", modal).scrollTop = 0; after && after($("#modal-body")); }
+// un audio sigue sonando aunque el modal quede oculto, así que se pausa al cerrar
+function closeModal() { modal.classList.remove("on"); $$("audio", modal).forEach((a) => a.pause()); }
+modal.onclick = (e) => { if (e.target === modal || e.target.closest(".x")) closeModal(); };
+addEventListener("keydown", (e) => e.key === "Escape" && closeModal());
 
 // la de hasta arriba (última en el DOM) queda derecha; las de atrás se abren en abanico
 function fanStack(st) {
@@ -797,41 +809,57 @@ $("#measure-btn").onclick = (e) => {
 
 /* ───── open when ───── */
 function openLetter(l) {
-  openModal(`<span class="label" style="color:var(--mute)">open when</span><h3>${l.t}</h3>${l.img ? `<img src="${l.img}" style="border-radius:6px;margin-bottom:12px">` : ""}<p class="body">${l.body}</p>
+  openModal(`<span class="label" style="color:var(--mute)">open when</span><h3>${l.t}</h3>${l.img ? `<img class="letter-img" src="${l.img}" alt="" decoding="async">` : ""}<p class="body" lang="es">${l.body}</p><p class="sign">— ${data.names.me}</p>
     ${l.canvas ? `<canvas id="cv" width="600" height="600"></canvas><div class="row" id="cvtools"></div>` : ""}`, () => l.canvas && initCanvas());
   if (l.confetti) confetti();
 }
 data.openWhen.categories.forEach((c) => {
   const sec = h("section", { className: "cat" }, `<div class="label" style="--c:${c.color}"><i></i>${c.name}</div>`);
-  c.letters.forEach((l) => sec.append(h("button", { className: "env", onclick: () => openLetter(l) }, `<span><small>open when</small>${l.t}</span>`)));
+  c.letters.forEach((l) => sec.append(h("button", { className: "env", onclick: () => openLetter(l) }, `<span><small>open when </small>${l.t}</span>`)));
   $("#cats").append(sec);
 });
+// al azar, pero nunca la misma dos veces seguidas
+const picker = (list) => { let last = -1; return () => { let i; do i = Math.floor(Math.random() * list.length); while (list.length > 1 && i === last); return list[(last = i)]; }; };
+const allLetters = data.openWhen.categories.flatMap((c) => c.letters);
+const nextLetter = picker(allLetters), nextHug = picker(data.openWhen.hugs);
+// la ruleta: el botón pasa por varios títulos antes de abrir la carta elegida
 $("#random").onclick = () => {
-  const all = data.openWhen.categories.flatMap((c) => c.letters);
-  openLetter(all[Math.floor(Math.random() * all.length)]);
+  const btn = $("#random"), label = btn.textContent, l = nextLetter();
+  if (reduceMotion()) return openLetter(l);
+  btn.disabled = true;
+  let n = 0;
+  const spin = setInterval(() => {
+    btn.textContent = "open when " + (++n < 12 ? allLetters[Math.floor(Math.random() * allLetters.length)] : l).t;
+    if (n < 12) return;
+    clearInterval(spin);
+    setTimeout(() => { btn.textContent = label; btn.disabled = false; $("#open").classList.contains("on") && openLetter(l); }, 450);
+  }, 70);
 };
 $("#hugbtn").onclick = () => {
-  const hugs = data.openWhen.hugs, msg = hugs[Math.floor(Math.random() * hugs.length)];
+  const msg = nextHug();
   openModal(`<h3>Come here</h3>
     <div class="hug"><svg viewBox="0 0 140 80" fill="none" stroke="#16161a" stroke-width="1.5" stroke-linecap="round">
       <g class="a"><circle cx="40" cy="22" r="10"/><path d="M40 32v28M40 40l14 8M40 60l-8 16M40 60l8 16"/></g>
       <g class="b"><circle cx="100" cy="22" r="10"/><path d="M100 32v28M100 40l-14 8M100 60l-8 16M100 60l8 16"/></g>
     </svg></div>
-    <p class="body" style="text-align:center">${msg}</p><p class="label" style="text-align:center;color:var(--mute);margin-top:12px">aquí sonaría un audio al azar</p>`,
+    <p class="body" lang="es" style="text-align:center">${msg}</p>`,
     (el) => setTimeout(() => $(".hug", el).classList.add("go"), 200));
 };
 
 function initCanvas() {
   const cv = $("#cv"), ctx = cv.getContext("2d");
   let color = "#16161a", drawing = false;
+  // fondo blanco para que el PNG descargado no salga transparente
+  const blank = () => { ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, 600, 600); };
+  blank();
   ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.lineJoin = "round";
   ["#16161a", "#2f4bd8", "#e0347f", "#a8d84a", "#f08a24"].forEach((c) => $("#cvtools").append(h("button", { className: "swatch", style: `background:${c}`, ariaLabel: c, onclick: () => color = c })));
-  $("#cvtools").append(h("button", { textContent: "clear", onclick: () => ctx.clearRect(0, 0, 600, 600) }));
+  $("#cvtools").append(h("button", { textContent: "clear", onclick: blank }));
   $("#cvtools").append(h("button", { textContent: "download", onclick: () => h("a", { download: "for-you.png", href: cv.toDataURL() }).click() }));
   const pos = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * 600 / r.width, (e.clientY - r.top) * 600 / r.height]; };
   cv.onpointerdown = (e) => { drawing = true; ctx.strokeStyle = color; ctx.beginPath(); ctx.moveTo(...pos(e)); cv.setPointerCapture(e.pointerId); };
   cv.onpointermove = (e) => { if (drawing) { ctx.lineTo(...pos(e)); ctx.stroke(); } };
-  cv.onpointerup = () => drawing = false;
+  cv.onpointerup = cv.onpointercancel = () => drawing = false;
 }
 
 function confetti() {
